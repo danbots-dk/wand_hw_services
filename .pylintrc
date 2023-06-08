@@ -1,0 +1,15 @@
+[MASTER]
+
+#extension-pkg-allow-list=netifaces
+
+[MESSAGES CONTROL]
+enable=W,E,R,F,C
+
+disable=line-too-long
+        
+[BASIC]
+
+good-names=i,
+           j,
+           k
+           
