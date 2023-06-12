@@ -17,8 +17,16 @@ This service collect information from buttons and turn on and off the leds
 
 This service collects data from the following services and writes to a FIFO buffer located at /tmp/io_stats
 * Battery
+  * batteryVoltage ([V])
+  * batteryChargePercent ([%])
+  * estimatedTimeForFullRecharge (time until fully charged, set to 999 when discharging)
+  * estimatedTimeForFullDischarge (time until fully discharged, set to 999 when charging)
+  * Alert 
+      * "Reset_indicator"
 * IMU
 * Standard IO
-** isBattery
-** 
+  * isBattery (True if powered by battery) 
+  * isCharging (True if battery is being charged)
+  * getCap1Val
+  * getCap2Val
 [Specification](SPEC_io.md)
