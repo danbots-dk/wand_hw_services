@@ -24,8 +24,6 @@ The service collect infromation from hw and provide the users whith the followin
 
 The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
 ```json
-Here goes your json object definition
-```
 batteryInfo = {
         "log_time": datetime,
         "batteryVoltage": cellVoltage,
@@ -35,7 +33,8 @@ batteryInfo = {
         "Alert": alert message,
         "isCharging": true/false
         "isBattery": true/false
-            }
+            }         
+```
 ## Configuration of service
 
 The service is configurable with:
