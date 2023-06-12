@@ -28,8 +28,8 @@ batteryInfo = {
         "log_time": datetime,
         "batteryVoltage": cellVoltage,
         "batteryChargePercent": cellPercent",
-        "estimatedTimeForFullRecharge": Time in decimal hours",
-        "estimatedTimeForDischarge": Time in decimal hours",
+        "estimatedTimeForFullRecharge": [decimal hours]",
+        "estimatedTimeForDischarge": [decimal hours]",
         "Alert": alert message,
         "isCharging": true/false
         "isBattery": true/false
