@@ -15,12 +15,27 @@ How to install AND uninstall the services
 
 The service collect infromation from hw and provide the users whith the following information
 
-- Main power connected (ON/OFF)
+- Is the battery charging
+- Is the wand powered by battery
 - Battery voltage
 - Battery charge percent
 - Estimate time for full recharge
 - Estimatted time for discharge
 
+The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
+```json
+Here goes your json object definition
+```
+batteryInfo = {
+        "log_time": datetime,
+        "batteryVoltage": cellVoltage,
+        "batteryChargePercent": cellPercent",
+        "estimatedTimeForFullRecharge": Time in decimal hours",
+        "estimatedTimeForDischarge": Time in decimal hours",
+        "Alert": alert message,
+        "isCharging": true/false
+        "isBattery": true/false
+            }
 ## Configuration of service
 
 The service is configurable with:
