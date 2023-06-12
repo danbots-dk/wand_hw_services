@@ -6,7 +6,10 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ## Installation and uninstallation of service
 
-How to install AND uninstall the services
+Install requirements.txt
+Copy batteryService.py to /usr/local/bin/
+Copy batteryService.service to /etc/systemd/system/
+
 
 ...
 
@@ -36,15 +39,7 @@ batteryInfo = {
             }         
 ```
 ## Configuration of service
-
-The service is configurable with:
-
-- Battery capacity
-- Other battery specsparameters
-- Wand estimated power consumption
-- Wand estimated usage percent
-
-The service is expected to be used with different hw (battery and electronics), but having a standard interface for user applications
+The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
 
 ## User interface
 
