@@ -23,7 +23,7 @@ The service collect infromation from hw and provide the users whith the followin
 - Estimatted time for discharge
 
 The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
-```json
+```javascript
 batteryInfo = {
         "log_time": datetime,
         "batteryVoltage": cellVoltage,
