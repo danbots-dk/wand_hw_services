@@ -10,45 +10,48 @@ import posix
 import errno
 import fcntl
 
+# Initialize I2C and create instances of BatteryService and IOexpander
 i2c = board.I2C()
 ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
+
+# Define the path for the named pipe (FIFO)
 WRITE_PIPE_NAME = "/tmp/battery_stats"
+
+# Define the delay interval for updating battery stats
 delay_s = 60
 start_latch = 1
 oldTime = time.time()
 
-# Create the named pipe if they don't exist
+# Create the named pipe if it doesn't exist
 if not os.path.exists(WRITE_PIPE_NAME):
     os.mkfifo(WRITE_PIPE_NAME)
-
 
 # Path to the lock file
 lock_file = "/var/lock/i2c_lock"
 
 # Create the lock file if it doesn't exist, or open it for reading and writing
-if not(os.path.isfile(lock_file)):
+if not os.path.isfile(lock_file):
     with open(lock_file, "w") as f:
         f.write("")
     f.close()
 
-        
-
-while(1):
-     if (time.time()-oldTime >= delay_s or start_latch == 1):
-        # Obtain i2c lock
+while True:
+    if (time.time()-oldTime >= delay_s or start_latch == 1):
+        # Obtain I2C lock
         lock = open(lock_file, "r+")
         fcntl.flock(lock, fcntl.LOCK_EX)
-        batState = batteryService.writeStats()
 
+        # Retrieve battery statistics and additional IOexpander data
+        batState = batteryService.writeStats()
         batState["isCharging"] = ioService.isCharging()
         batState["isBattery"] = ioService.isBattery()
         fcntl.flock(lock, fcntl.LOCK_UN)
         lock.close()
+
         try:
-            # NONBLOCK uses more cpu but is up to date
+            # Write battery state to the named pipe (FIFO)
             fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
-            #fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY)
             batState = json.dumps(batState, indent=4)
             posix.write(fifo_fd, batState.encode())
             posix.close(fifo_fd)
@@ -58,4 +61,3 @@ while(1):
 
         oldTime = time.time()
         start_latch = 0
-
