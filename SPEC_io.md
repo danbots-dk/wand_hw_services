@@ -7,26 +7,29 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ## Installation and uninstallation of service
 
-'''
+```
 pip install -r requirements.txt
 sudo cp ioService/MCP23008.py /usr/local/bin/
 sudo cp ioService/ioService.py /usr/local/bin/
 sudo cp ioService/ioService.service /etc/systemd/system/
 
 sudo service ioService start
-'''
+```
 
 
 ## Service description
 The service implements functionality to set state of certain IO's, and to output the state of others. This is done in a non blocking fashion using threading and with minimal cpu usage.
 
 The following IO's can be set by the user:
-- Send kill signal to power off the device
-- Start the buzzer
-- Start the vibration motor
+- Send kill signal to cut the power supply
+- Set buzzer on/off
+  - Timer
+- Set vibration motor on/off
+  - Timer  
 - Enable the bootloader stage for next reboot
 - Flash LED
 - Dias LED
+- Quick service shutdown
 
 The following input can be read by the user:
 - Both fron capacitive touch buttons
