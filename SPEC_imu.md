@@ -43,4 +43,5 @@ imuState = {
             "gyro_z": f"{sox.acceleration[2]:.2f}",
             }     
 ```
+![](imuService/imuAxis.png?raw=true)
 
