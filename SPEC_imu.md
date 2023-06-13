@@ -8,11 +8,10 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp batteryService/MAX17048.py /usr/local/bin/
-sudo cp batteryService/batteryService.py /usr/local/bin/
-sudo cp batteryService/batteryService.service /etc/systemd/system/
+sudo cp imuService/imuService.py /usr/local/bin/
+sudo cp imuService/imuService.service /etc/systemd/system/
 
-sudo service batteryService start
+sudo service imuService start
 ```
 
 
@@ -20,33 +19,28 @@ sudo service batteryService start
 
 The service collect infromation from hw and provide the users whith the following information
 
-- Is the battery charging
-- Is the wand powered by battery
-- Battery voltage
-- Battery charge percent
-- Estimate time for full recharge
-- Estimatted time for discharge
-- Battery voltage too low*
+- Rotation around x-axis
+- Rotation around y-axis
+- Rotation around z-axis
 
-The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
-```javascript
-batteryInfo = {
-        "log_time": datetime,
-        "batteryVoltage": cellVoltage [V],
-        "batteryChargePercent": cellPercent [%],
-        "estimatedTimeForFullRecharge": [decimal hours]",
-        "estimatedTimeForDischarge": [decimal hours]",
-        "Alert": alert message,
-        "isCharging": true/false
-        "isBattery": true/false
-            }         
-```
+The range of a full rotation around any given axis is from -10 to 10
+
+x-axis is perpendicular to the length of the wand
+y-axis runs along the length of the wand
+z-axis is perpendicular to the length of the wand going naturally upwards 
+
 ## Configuration of service
-The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
+No configuration needed.
 
 ## User interface
 
-Description of how the user get the information from service
-
-...
+The data is written to a named pipe available at /tmp/imu_stats in the following JSON structure 
+```javascript
+imuState = {
+            "log_time": str(datetime.datetime.now()),
+            "gyro_x": f"{sox.acceleration[0]:.2f}",
+            "gyro_y": f"{sox.acceleration[1]:.2f}",
+            "gyro_z": f"{sox.acceleration[2]:.2f}",
+            }     
+```
 
