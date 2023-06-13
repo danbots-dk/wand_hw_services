@@ -7,14 +7,14 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ## Installation and uninstallation of service
 
-'''
+```
 pip install -r requirements.txt
 sudo cp ioService/MCP23008.py /usr/local/bin/
 sudo cp ioService/ioService.py /usr/local/bin/
 sudo cp ioService/ioService.service /etc/systemd/system/
 
 sudo service ioService start
-'''
+```
 
 
 ## Service description
