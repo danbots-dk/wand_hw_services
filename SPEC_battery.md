@@ -34,11 +34,12 @@ batteryInfo = {
         "log_time": datetime,
         "batteryVoltage": cellVoltage [V],
         "batteryChargePercent": cellPercent [%],
-        "estimatedTimeForFullRecharge": [decimal hours]",
-        "estimatedTimeForDischarge": [decimal hours]",
+        "estimatedTimeForFullRecharge": [decimal hours],
+        "estimatedTimeForDischarge": [decimal hours],
         "Alert": alert message,
-        "isCharging": true/false
-        "isBattery": true/false
+        "isCharging": true/false,
+        "isBattery": true/false,
+        "lowVoltageDetected", true/false
             }         
 ```
 ## Configuration of service
