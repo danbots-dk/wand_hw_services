@@ -6,23 +6,34 @@ import json
 import time 
 import os
 import datetime
-
+import posix
+import errno
 
 i2c = board.I2C()
 ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
-bat_stats = "/tmp/battery_stats"
-if not os.path.exists(bat_stats):
-    os.mkfifo(bat_stats)
+WRITE_PIPE_NAME = "/tmp/battery_stats"
+delay_s = 60
+if not os.path.exists(WRITE_PIPE_NAME):
+    os.mkfifo(WRITE_PIPE_NAME)
+oldTime = time.time()
 
 while(1):
     batState = batteryService.writeStats()
 
     batState["isCharging"] = ioService.isCharging()
     batState["isBattery"] = ioService.isBattery()
+    if (time.time()-oldTime >= delay_s):
+        try:
+            # NONBLOCK uses more cpu but is up to date
+            fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
+            #fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY)
+            batState = json.dumps(batState, indent=4)
+            posix.write(fifo_fd, batState.encode())
+            posix.close(fifo_fd)
+        except OSError as ex:
+            if ex.errno == errno.ENXIO:
+                pass  # try later
 
-    bat_info = json.dumps(batState, indent=4)
-    fifo = open(bat_stats, "w")
-    fifo.write(bat_info)
-    fifo.flush()
-    fifo.close()
+        oldTime = time.time()
+
