@@ -26,6 +26,7 @@ The service collect infromation from hw and provide the users whith the followin
 - Battery charge percent
 - Estimate time for full recharge
 - Estimatted time for discharge
+- Battery voltage too low
 
 The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
 ```javascript
