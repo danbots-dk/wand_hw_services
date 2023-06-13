@@ -4,24 +4,47 @@ import os
 import json
 import datetime
 
-
 class BatteryService():
-    def __init__(self, i2c):
-        #i2c = board.I2C()  
+    """
+    A class that provides battery-related functionality using the adafruit_max1704x library.
 
+    Attributes:
+        cellVoltage (float): The voltage of the battery cell.
+        cellPercent (float): The remaining charge percentage of the battery.
+        estimatedTimeForFullRecharge (float): The estimated time for the battery to fully recharge.
+        estimatedTimeForDischarge (float): The estimated time for the battery to discharge completely.
+        hibernating (bool): Indicates if the battery is in hibernation mode.
+        alertStatus (str): The current alert status of the battery.
+
+    Methods:
+        __init__(self, i2c): Initializes the BatteryService class.
+        set_resetVoltage(self, resetVoltage): Sets the reset voltage for the battery.
+        set_voltageAlertMin(self, minVoltage): Sets the minimum voltage alert threshold for the battery.
+        set_voltageAlertMax(self, maxVoltage): Sets the maximum voltage alert threshold for the battery.
+        get_cellVoltage(self): Retrieves the voltage of the battery cell.
+        get_cellPercent(self): Retrieves the remaining charge percentage of the battery.
+        get_TimeToCharge(self): Calculates the estimated time for the battery to recharge or discharge completely.
+        get_HibernateState(self): Retrieves the hibernation state of the battery.
+        get_Alerts(self): Retrieves the current alert status of the battery.
+        writeStats(self): Writes battery-related statistics to a JSON object.
+
+    """
+
+    def __init__(self, i2c):
+        """
+        Initializes the BatteryService class.
+
+        Args:
+            i2c: The I2C bus object used for communication with the battery.
+
+        """
         self.cellVoltage = 0
         self.cellPercent = 0
         self.estimatedTimeForFullRecharge = 0
         self.estimatedTimeForDischarge = 0
-        self.hibernating = 0
+        self.hibernating = False
         self.alertStatus = "None"
 
-        #self.battery_stats = "/tmp/batteryService_stats"
-        #self.battery_conf = "/tmp/batteryService_conf"
-        # Create the FIFO if it doesn't exist
-        #if not os.path.exists(self.battery_stats):
-        #    os.mkfifo(self.battery_stats)
-        
         self.max17 = adafruit_max1704x.MAX17048(i2c)
         hex(self.max17.chip_version)
         hex(self.max17.chip_id)
@@ -32,60 +55,93 @@ class BatteryService():
         self.set_voltageAlertMax()
         print("Battery service started!")
 
+    def set_resetVoltage(self, resetVoltage=2.5):
+        """
+        Sets the reset voltage for the battery.
 
-        # Below value and chip considers it a battery swap
-    def set_resetVoltage(self, resetVoltage = 2.5):
+        Args:
+            resetVoltage (float): The reset voltage value to set. Default is 2.5V.
+
+        """
         self.max17.reset_voltage = resetVoltage
-        
 
-# Hibernation mode reduces how often the ADC is read, for power reduction. There is an automatic
-# enter/exit mode but you can also customize the activity threshold both as voltage and charge rate
-# self.max17.activity_threshold = 0.2
-# self.max17.hibernation_threshold = 5
-# self.max17.hibernate()
-# self.max17.wake()
+    def set_voltageAlertMin(self, minVoltage=3.5):
+        """
+        Sets the minimum voltage alert threshold for the battery.
 
-# The alert pin can be used to detect when the voltage of the battery goes below or
-# above a voltage, you can also query the alert in the loop.
-    def set_voltageAlertMin(self, minVoltage = 3.5):
+        Args:
+            minVoltage (float): The minimum voltage threshold value to set. Default is 3.5V.
+
+        """
         self.max17.voltage_alert_min = minVoltage
-    def set_voltageAlertMax(self, maxVoltage = 4.25):
+
+    def set_voltageAlertMax(self, maxVoltage=4.25):
+        """
+        Sets the maximum voltage alert threshold for the battery.
+
+        Args:
+            maxVoltage (float): The maximum voltage threshold value to set. Default is 4.25V.
+
+        """
         self.max17.voltage_alert_max = maxVoltage
 
     def get_cellVoltage(self):
+        """
+        Retrieves the voltage of the battery cell.
+
+        Returns:
+            float: The voltage of the battery cell [V].
+
+        """
         cellVoltage = self.max17.cell_voltage
         return cellVoltage
-    
+
     def get_cellPercent(self):
+        """
+        Retrieves the remaining charge percentage of the battery.
+
+        Returns:
+            float: The remaining charge percentage of the battery [%].
+
+        """
         cellPercent = self.max17.cell_percent
         return cellPercent
 
-
     def get_TimeToCharge(self):
+        """
+        Calculates the estimated time for the battery to recharge or discharge completely.
+
+        Returns:
+            float: The estimated time for the battery to fully recharge.
+            float: The estimated time for the battery to discharge completely.
+
+        """
         try:
             if self.max17.charge_rate < 0:
-                estimatedTimeToDischarge = (self.max17.cell_percent/(self.max17.charge_rate*(-1)))
+                estimatedTimeToDischarge = (self.max17.cell_percent / (self.max17.charge_rate * (-1)))
                 estimatedTimeToFullRecharge = 999
-                #Hours_d = estimatedTimeForDischarge
-                #Minutes_d = 60 * (Hours_d % 1)
-                #Seconds_d = 60 * (Minutes_d % 1)
-                #estimatedTimeForFullRecharge = f"{Hours_d}:{Minutes_d}:{Seconds_d}"
             else:
-                estimatedTimeToFullRecharge = (100-self.max17.cell_percent)/self.max17.charge_rate
+                estimatedTimeToFullRecharge = (100 - self.max17.cell_percent) / self.max17.charge_rate
                 estimatedTimeToDischarge = 999
-                #Hours_r = estimatedTimeForFullRecharge
-                #Minutes_r = 60 * (Hours_r % 1)
-                #Seconds_r = 60 * (Minutes_r % 1)
-                #estimatedTimeForFullRecharge = f"{Hours_r}:{Minutes_r}:{Seconds_r}"
             return estimatedTimeToFullRecharge, estimatedTimeToDischarge
         except:
-            # Important because charge rate can be zero on init (~2s)
             return 0, 0
 
     def get_HibernateState(self):
+        """
+        Retrieves the hibernation state of the battery.
+
+        """
         self.hibernating = self.max17.hibernating
 
     def get_Alerts(self):
+        """
+        Retrieves the current alert status of the battery.
+
+        Returns:
+            str: The current alert status of the battery.
+
+        """
         if self.max17.active_alert:
             if self.max17.reset_alert:
                 alertStatus = "Reset_indicator"
@@ -116,29 +172,33 @@ class BatteryService():
 
         return alertStatus
 
-
     def writeStats(self):
+        """
+        Writes battery-related statistics to a JSON object.
+
+        Returns:
+            dict: A JSON object containing battery-related statistics.
+
+        """
         timeToCharge = self.get_TimeToCharge()
         batteryInfo = {
-        "log_time": str(datetime.datetime.now()),
-        "batteryVoltage": f"{self.get_cellVoltage():.2f}",
-        "batteryChargePercent": f"{self.get_cellPercent():.2f}",
-        "estimatedTimeForFullRecharge": f"{timeToCharge[0]:.2f}",
-        "estimatedTimeForDischarge": f"{timeToCharge[1]:.2f}",
-        "Alert": self.get_Alerts()
-            }
+            "log_time": str(datetime.datetime.now()),
+            "batteryVoltage": f"{self.get_cellVoltage():.2f}",
+            "batteryChargePercent": f"{self.get_cellPercent():.2f}",
+            "estimatedTimeForFullRecharge": f"{timeToCharge[0]:.2f}",
+            "estimatedTimeForDischarge": f"{timeToCharge[1]:.2f}",
+            "Alert": self.get_Alerts()
+        }
         return batteryInfo
-
-        
 
 
 if __name__ == "__main__":
     import time
     import board
-    i2c = board.I2C()  
+
+    i2c = board.I2C()
     bat = BatteryService(i2c)
-    while 1:
-        bat.writeState()
+
+    while True:
+        bat.writeStats()
         time.sleep(1)
-
-
