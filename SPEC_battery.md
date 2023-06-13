@@ -31,8 +31,8 @@ The data is written to a named pipe available at /tmp/bat_stats in the following
 ```javascript
 batteryInfo = {
         "log_time": datetime,
-        "batteryVoltage": cellVoltage,
-        "batteryChargePercent": cellPercent",
+        "batteryVoltage": cellVoltage [V],
+        "batteryChargePercent": cellPercent [%],
         "estimatedTimeForFullRecharge": [decimal hours]",
         "estimatedTimeForDischarge": [decimal hours]",
         "Alert": alert message,
