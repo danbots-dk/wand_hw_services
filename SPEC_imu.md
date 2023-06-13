@@ -29,6 +29,8 @@ x-axis is perpendicular to the length of the wand
 y-axis runs along the length of the wand
 z-axis is perpendicular to the length of the wand going naturally upwards 
 
+![](imuService/imuAxis.png?raw=true)
+
 ## Configuration of service
 No configuration needed.
 
@@ -43,5 +45,5 @@ imuState = {
             "gyro_z": f"{sox.acceleration[2]:.2f}",
             }     
 ```
-![](imuService/imuAxis.png?raw=true)
+
 
