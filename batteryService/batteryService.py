@@ -19,12 +19,28 @@ if not os.path.exists(WRITE_PIPE_NAME):
     os.mkfifo(WRITE_PIPE_NAME)
 oldTime = time.time()
 
-while(1):
-    batState = batteryService.writeStats()
+# Path to the lock file
+lock_file = "/var/run/i2c_lock"
+# Create the lock file
+if os.path.isfile(lock_file): 
+    lock = open(lock_file, "r+")
+else:
+    with open(lock_file, "w") as f:
+        f.write("")
 
-    batState["isCharging"] = ioService.isCharging()
-    batState["isBattery"] = ioService.isBattery()
+while(1):
+
+    
     if (time.time()-oldTime >= delay_s or start_latch == 1):
+        # Obtain i2c lock
+        lock = open(lock_file, "r+")
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        batState = batteryService.writeStats()
+
+        batState["isCharging"] = ioService.isCharging()
+        batState["isBattery"] = ioService.isBattery()
+        fcntl.flock(lock, fcntl.LOCK_UN)
+        lock.close()
         try:
             # NONBLOCK uses more cpu but is up to date
             fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
