@@ -21,7 +21,7 @@ sudo service ioService start
 The service implements functionality to set state of certain IO's, and to output the state of others. This is done in a non blocking fashion using threading and with minimal cpu usage.
 
 The following IO's can be set by the user:
-- Send kill signal to power off the device
+- Send kill signal to cut the power supply
 - Set buzzer on/off
   - Timer
 - Set vibration motor on/off
