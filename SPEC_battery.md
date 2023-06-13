@@ -45,6 +45,6 @@ batteryInfo = {
         "Alert": alert message,
         "isCharging": true/false,
         "isBattery": true/false,
-        "lowVoltageDetected", true/false
+        "lowVoltageDetected" true/false
             }         
 ```
