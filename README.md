@@ -6,7 +6,7 @@ This service collect battery and power status
 [Specification](SPEC_battery.md)
 
 ## IMU service
-This service collect imuz rotation data
+This service collect imu rotation data
 [Specification](SPEC_imu.md)
 
 
