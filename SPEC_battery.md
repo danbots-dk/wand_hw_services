@@ -26,8 +26,14 @@ The service collect infromation from hw and provide the users whith the followin
 - Battery charge percent
 - Estimate time for full recharge
 - Estimatted time for discharge
-- Battery voltage too low*
+- Battery voltage too low
 
+The service shutsdown gracefully within 3 seconds
+
+## Configuration of service
+The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
+
+## User interface
 The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
 ```javascript
 batteryInfo = {
@@ -42,12 +48,3 @@ batteryInfo = {
         "lowVoltageDetected", true/false
             }         
 ```
-## Configuration of service
-The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
-
-## User interface
-
-Description of how the user get the information from service
-
-...
-
