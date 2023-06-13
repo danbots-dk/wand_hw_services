@@ -1,3 +1,6 @@
 pylint
 gpiozero
+adafruit-blinka
+adafruit-circuitpython-mcp230xx
 adafruit-circuitpython-max1704x
+adafruit-circuitpython-lsm6ds

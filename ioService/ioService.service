@@ -1,0 +1,10 @@
+[Unit]
+Description=Starts the io service. Configured with both read and write capabilities in a non blocking fashion.
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/bin/ioService.py
+WorkingDirectory=/usr/local/bin/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

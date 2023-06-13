@@ -1,0 +1,10 @@
+[Unit]
+Description=Starts the battery monitoring service.
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/bin/batteryService.py
+WorkingDirectory=/usr/local/bin/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -6,12 +6,14 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ## Installation and uninstallation of service
 
-Install requirements.txt
-Copy batteryService.py to /usr/local/bin/
-Copy batteryService.service to /etc/systemd/system/
+'''
+pip install -r requirements.txt
+sudo cp batteryService/MAX17048.py /usr/local/bin/
+sudo cp batteryService/batteryService.py /usr/local/bin/
+sudo cp batteryService/batteryService.service /etc/systemd/system/
 
-
-...
+sudo service batteryService start
+'''
 
 
 ## Service description

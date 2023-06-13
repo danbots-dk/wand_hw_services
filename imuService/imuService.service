@@ -1,0 +1,10 @@
+[Unit]
+Description=My Python Service
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/bin/imuService.py
+WorkingDirectory=/usr/local/bin/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
