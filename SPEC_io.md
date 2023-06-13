@@ -22,8 +22,8 @@ The service implements functionality to set state of certain IO's, and to output
 
 The following IO's can be set by the user:
 - Send kill signal to power off the device
-- Start the buzzer
-- Start the vibration motor
+- Set buzzer on/off
+- Set vibration motor on/off
 - Enable the bootloader stage for next reboot
 - Flash LED
 - Dias LED
