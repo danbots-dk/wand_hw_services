@@ -29,7 +29,7 @@ The following IO's can be set by the user:
 - Enable the bootloader stage for next reboot
 - Flash LED
 - Dias LED
-- Gracefull shutdown
+- Gracefull service shutdown
 
 The following input can be read by the user:
 - Both fron capacitive touch buttons
