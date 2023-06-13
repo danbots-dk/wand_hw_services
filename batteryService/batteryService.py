@@ -14,6 +14,7 @@ ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
 WRITE_PIPE_NAME = "/tmp/battery_stats"
 delay_s = 60
+start_latch = 1
 if not os.path.exists(WRITE_PIPE_NAME):
     os.mkfifo(WRITE_PIPE_NAME)
 oldTime = time.time()
@@ -23,7 +24,7 @@ while(1):
 
     batState["isCharging"] = ioService.isCharging()
     batState["isBattery"] = ioService.isBattery()
-    if (time.time()-oldTime >= delay_s):
+    if (time.time()-oldTime >= delay_s or start_latch == 1):
         try:
             # NONBLOCK uses more cpu but is up to date
             fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
@@ -36,4 +37,5 @@ while(1):
                 pass  # try later
 
         oldTime = time.time()
+        start_latch = 0
 
