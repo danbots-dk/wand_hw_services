@@ -28,8 +28,8 @@ def write_to_fifo():
                 "cap2val": ioService.getCap2Val(),
             }
             # NONBLOCK uses more cpu but is up to date
-            # fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
-            fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY)
+            fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
+            #fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY)
             ioInput = json.dumps(ioInput, indent=4)
             posix.write(fifo_fd, ioInput.encode())
             posix.close(fifo_fd)
@@ -37,7 +37,7 @@ def write_to_fifo():
             if ex.errno == errno.ENXIO:
                 pass  # try later
 
-        #time.sleep(0.1)
+        time.sleep(60)
 
 def read_from_fifo():
     while True:
@@ -54,8 +54,6 @@ def read_from_fifo():
             ioService.setBootloader(data["setBootloader"])
             ioService.setFlash(data["setFlash"])
             ioService.setDias(int(data["setDias"]))
-            
-            
 
             #print(data["sendKillSig"])
             
