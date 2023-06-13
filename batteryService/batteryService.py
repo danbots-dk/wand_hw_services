@@ -8,6 +8,7 @@ import os
 import datetime
 import posix
 import errno
+import fcntl
 
 i2c = board.I2C()
 ioService = IOexpander(i2c)
@@ -15,23 +16,26 @@ batteryService = BatteryService(i2c)
 WRITE_PIPE_NAME = "/tmp/battery_stats"
 delay_s = 60
 start_latch = 1
-if not os.path.exists(WRITE_PIPE_NAME):
-    os.mkfifo(WRITE_PIPE_NAME)
 oldTime = time.time()
 
+# Create the named pipe if they don't exist
+if not os.path.exists(WRITE_PIPE_NAME):
+    os.mkfifo(WRITE_PIPE_NAME)
+
+
 # Path to the lock file
-lock_file = "/var/run/i2c_lock"
-# Create the lock file
-if os.path.isfile(lock_file): 
-    lock = open(lock_file, "r+")
-else:
+lock_file = "/var/lock/i2c_lock"
+
+# Create the lock file if it doesn't exist, or open it for reading and writing
+if not(os.path.isfile(lock_file)):
     with open(lock_file, "w") as f:
         f.write("")
+    f.close()
+
+        
 
 while(1):
-
-    
-    if (time.time()-oldTime >= delay_s or start_latch == 1):
+     if (time.time()-oldTime >= delay_s or start_latch == 1):
         # Obtain i2c lock
         lock = open(lock_file, "r+")
         fcntl.flock(lock, fcntl.LOCK_EX)

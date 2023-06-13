@@ -53,6 +53,7 @@ class BatteryService():
         self.set_resetVoltage()
         self.set_voltageAlertMin()
         self.set_voltageAlertMax()
+        self.lowVoltageDetected = False
         print("Battery service started!")
 
     def set_resetVoltage(self, resetVoltage=2.5):
@@ -149,6 +150,7 @@ class BatteryService():
 
             if self.max17.voltage_high_alert:
                 alertStatus = "Voltage_high"
+                self.lowVoltageDetected = True
                 self.max17.voltage_high_alert = False  # clear the alert
 
             if self.max17.voltage_low_alert:
@@ -168,6 +170,7 @@ class BatteryService():
                 self.max17.SOC_change_alert = False  # clear the alert
 
         else:
+            self.lowVoltageDetected = False
             alertStatus = "None"
 
         return alertStatus
@@ -187,7 +190,8 @@ class BatteryService():
             "batteryChargePercent": f"{self.get_cellPercent():.2f}",
             "estimatedTimeForFullRecharge": f"{timeToCharge[0]:.2f}",
             "estimatedTimeForDischarge": f"{timeToCharge[1]:.2f}",
-            "Alert": self.get_Alerts()
+            "Alert": self.get_Alerts(),
+            "lowVoltageDetected": self.lowVoltageDetected
         }
         return batteryInfo
 

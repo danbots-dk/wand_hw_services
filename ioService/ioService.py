@@ -12,26 +12,30 @@ import threading
 import os
 import fcntl
 
+# Initialize I2C and IOexpander
 i2c = board.I2C()
-WRITE_PIPE_NAME = "/tmp/IO_stats"
-READ_PIPE_NAME = "/tmp/IO_conf"
 ioService = IOexpander(i2c)
 
+# Define the paths for the named pipes (FIFO)
+WRITE_PIPE_NAME = "/tmp/io_stats"
+READ_PIPE_NAME = "/tmp/io_conf"
+
+# Create the named pipes if they don't exist
 if not os.path.exists(WRITE_PIPE_NAME):
     os.mkfifo(WRITE_PIPE_NAME)
-
 if not os.path.exists(READ_PIPE_NAME):
     os.mkfifo(READ_PIPE_NAME)
 
 # Path to the lock file
-lock_file = "/var/run/i2c_lock"
-# Create the lock file
-if os.path.isfile(lock_file): 
-    lock = open(lock_file, "r+")
-else:
+lock_file = "/var/lock/i2c_lock"
+
+# Create the lock file if it doesn't exist, or open it for reading and writing
+if not os.path.isfile(lock_file):
     with open(lock_file, "w") as f:
         f.write("")
+    f.close()
 
+# Function for writing data to the FIFO
 def write_to_fifo():
     delay_s = 0.1
     start_latch = 1
@@ -44,9 +48,7 @@ def write_to_fifo():
                     "cap1val": ioService.getCap1Val(),
                     "cap2val": ioService.getCap2Val(),
                 }
-                # NONBLOCK uses more cpu but is up to date
                 fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
-                #fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY)
                 ioInput = json.dumps(ioInput, indent=4)
                 posix.write(fifo_fd, ioInput.encode())
                 posix.close(fifo_fd)
@@ -57,7 +59,7 @@ def write_to_fifo():
             oldTime = time.time()
             start_latch = 0
 
-
+# Function for reading data from the FIFO
 def read_from_fifo():
     while True:
         try:
@@ -66,7 +68,7 @@ def read_from_fifo():
             data = posix.read(fifo_fd, buffer_size)
             posix.close(fifo_fd)
             data = json.loads(str(data.decode()))
-            # Obtain i2c lock
+            # Obtain I2C lock
             lock = open(lock_file, "r+")
             fcntl.flock(lock, fcntl.LOCK_EX)
             ioService.sendKillSig(data["sendKillSig"])
@@ -77,12 +79,8 @@ def read_from_fifo():
             ioService.setDias(int(data["setDias"]))
             fcntl.flock(lock, fcntl.LOCK_UN)
             lock.close()
-
-            
         except:
             pass
-
-        
 
 # Create separate threads for read and write operations
 write_thread = threading.Thread(target=write_to_fifo)
