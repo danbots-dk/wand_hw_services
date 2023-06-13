@@ -29,12 +29,12 @@ The following IO's can be set by the user:
 - Enable the bootloader stage for next reboot
 - Flash LED
 - Dias LED
-- Quick service shutdown
 
 The following input can be read by the user:
 - Both fron capacitive touch buttons
 - Capacitive touch button at the rear 
 
+The service shutsdown gracefully within 3 seconds
 
 ## Configuration of service
 No configuration except installation is needed.
