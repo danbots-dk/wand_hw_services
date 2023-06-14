@@ -32,7 +32,9 @@ The following IO's can be set by the user:
 
 The following input can be read by the user:
 - Both fron capacitive touch buttons
-- Capacitive touch button at the rear 
+- Capacitive touch button at the rear
+- Powerdown signal from on/off button
+  - When press is detected the variable latches so that it is always detected.
 
 The service shutsdown gracefully within 3 seconds
 
@@ -46,8 +48,9 @@ The input data is available at /tmp/io_stats in the following JSON structure
 ```javascript
 ioInput =  {
     "log_time": dateTime,
-    "cap1val": ioService.getCap1Val(),
-    "cap2val": ioService.getCap2Val(),
+    "cap1val": 0/1,
+    "cap2val": 0/1,
+    "killSig": 0/1,
             }     
 ```
 
