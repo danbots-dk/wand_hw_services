@@ -25,12 +25,6 @@ class IOexpander:
         self.cap1 = self.mcp.get_pin(2)
         self.cap1.direction = digitalio.Direction.INPUT
 
-        self.cap1 = self.mcp.get_pin(2)
-        self.cap1.direction = digitalio.Direction.INPUT
-
-        self.cap2 = self.mcp.get_pin(3)
-        self.cap2.direction = digitalio.Direction.INPUT
-
         self.cap2 = self.mcp.get_pin(3)
         self.cap2.direction = digitalio.Direction.INPUT
 
