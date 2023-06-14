@@ -42,7 +42,7 @@ install-io:
 	@echo "Installing the IO service"
 	pip install -r requirements.txt
 	sudo cp ioService/ioService.py /usr/local/bin/
-	sudo cp ioService/MCP23008.py /usr/local/bin/
+	sudo cp ioService/ioLib.py /usr/local/bin/
 	sudo cp ioService/ioService.service /etc/systemd/system/
 	sudo service ioService start
 
@@ -50,7 +50,7 @@ uninstall-io:
 	@echo "Uninstalling the IO service"
 	systemctl stop ioService.service
 	sudo rm -f /usr/local/bin/ioService.py 
-	sudo rm -f /usr/local/bin/MCP23008.py 
+	sudo rm -f /usr/local/bin/ioLib.py 
 	sudo rm -f /etc/systemd/system/ioService.service
 
 install: install-battery install-imu install-io
