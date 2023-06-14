@@ -29,6 +29,12 @@ The following IO's can be set by the user:
 - Enable the bootloader stage for next reboot
 - Flash LED
 - Dias LED
+- Set 4 different indicator LED's
+  - idx 0 is the one on the carrier pcb
+  - idx 1 is top capacitive touch pcb
+  - idx 2 is bottom capactive touch pcb
+  - idx 3 is the back capacitive touch pcb
+  - r,g,b is in range 0-255
 
 The following input can be read by the user:
 - Both fron capacitive touch buttons
@@ -62,6 +68,7 @@ IO_write = {
         "setSpeaker": true/false,
         "setBootloader": true/false,
         "setDias": 0.0-1.0,
-        "setFlash": 0.0-1.0
+        "setFlash": 0.0-1.0,
+        "setIndicatorLED": [idx, r,g,b]
     }
 ```
