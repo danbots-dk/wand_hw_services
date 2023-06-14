@@ -78,6 +78,7 @@ def read_from_fifo():
             ioService.setBootloader(data["setBootloader"])
             ioService.setFlash(data["setFlash"])
             ioService.setDias(int(data["setDias"]))
+            ioService.setIndicatorLED(data["setIndicatorLED"])
             fcntl.flock(lock, fcntl.LOCK_UN)
             lock.close()
         except:
