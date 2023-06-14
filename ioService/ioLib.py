@@ -5,6 +5,8 @@ import digitalio
 import RPi.GPIO as GPIO  
 import datetime
 import pigpio
+import board
+import neopixel
 
 class IOexpander:
     def __init__(self,i2c):
@@ -46,7 +48,14 @@ class IOexpander:
         GPIO.setup(self.batInterrupt_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.OnOff_interrupt_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        self.pigpio = pigpio.pi()
+        pixel_pin = board.D18
+        # The number of NeoPixels
+        num_pixels = 2
+        ORDER = neopixel.RGB
+        brightness = 0.5
+        self.pixels = neopixel.NeoPixel(
+            pixel_pin, num_pixels, brightness=brightness, auto_write=False, pixel_order=ORDER
+        )
 
     def createOnOffInterrupt(self):
         GPIO.add_event_detect(self.OnOff_interrupt_button, GPIO.FALLING, callback=self.OnOff_interrupt, bouncetime=100)
@@ -72,6 +81,15 @@ class IOexpander:
             GPIO.output(self.DIAS, GPIO.HIGH)
         else:
             GPIO.output(self.DIAS, GPIO.LOW)
+    
+    def setIndicatorLED(self, val):
+        print(val[0])
+        print(val[1])
+        print(val[2])
+        print(val[3])
+
+        self.pixels[(val[0])] = ((val[1]),(val[2]),(val[3]))
+        self.pixels.show()
         
     def setBuzzer(self, state):
         ##self.buzzer.value = state
@@ -117,14 +135,16 @@ class IOexpander:
         return ioInfo
 
     def readConf(self):
-        fifo_read = open('/tmp/IO_conf', 'r')
+        fifo_read = open('/tmp/io_conf', 'r')
         data = json.load(fifo_read)
+        
         self.sendKillSig(data["sendKillSig"])
         self.setBuzzer(data["setBuzzer"])
         self.setSpeaker(data["setSpeaker"])
         self.setBootloader(data["setBootloader"])
         self.setDias(data["setDias"])
         self.setFlash(data["setFlash"])
+        self.setIndicatorLED(data["setIndicatorLED"])
         fifo_read.close()
         #print(data["battery"]["Alert"])
 
