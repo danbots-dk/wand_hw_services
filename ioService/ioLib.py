@@ -59,6 +59,7 @@ class IOexpander:
 
         self.OnOff_interruptSig = 0
         self.createOnOffInterrupt()
+        print("io service started")
 
     def OnOff_interrupt(self, channel):
         self.OnOff_interruptSig = 1
