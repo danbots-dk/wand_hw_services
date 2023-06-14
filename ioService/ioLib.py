@@ -57,6 +57,12 @@ class IOexpander:
             pixel_pin, num_pixels, brightness=brightness, auto_write=False, pixel_order=ORDER
         )
 
+        self.OnOff_interruptSig = 0
+        self.createOnOffInterrupt()
+
+    def OnOff_interrupt(self, channel):
+        self.OnOff_interruptSig = 1
+
     def createOnOffInterrupt(self):
         GPIO.add_event_detect(self.OnOff_interrupt_button, GPIO.FALLING, callback=self.OnOff_interrupt, bouncetime=100)
 
@@ -68,7 +74,7 @@ class IOexpander:
             GPIO.setup(self.OnOff_kill, GPIO.OUT)
         else:
             pass
-        
+
 
     def setFlash(self, state):        
         if state == True:
@@ -83,11 +89,6 @@ class IOexpander:
             GPIO.output(self.DIAS, GPIO.LOW)
     
     def setIndicatorLED(self, val):
-        print(val[0])
-        print(val[1])
-        print(val[2])
-        print(val[3])
-
         self.pixels[(val[0])] = ((val[1]),(val[2]),(val[3]))
         self.pixels.show()
         
@@ -130,7 +131,8 @@ class IOexpander:
         "cap1val": f"{self.getCap1Val()}",
         "cap2val": f"{self.getCap2Val()}",
         "isBattery": f"{self.isBattery()}",
-        "isCharging": f"{self.isCharging()}"
+        "isCharging": f"{self.isCharging()}",
+        "killSig": f"{self.OnOff_interruptSig}"
             }
         return ioInfo
 

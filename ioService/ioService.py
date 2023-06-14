@@ -48,6 +48,7 @@ def write_to_fifo():
                     "log_time": str(datetime.datetime.now()),
                     "cap1val": ioService.getCap1Val(),
                     "cap2val": ioService.getCap2Val(),
+                    "killSig": ioService.OnOff_interruptSig
                 }
                 fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
                 ioInput = json.dumps(ioInput, indent=4)
