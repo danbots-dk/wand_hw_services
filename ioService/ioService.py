@@ -5,7 +5,7 @@ import digitalio
 import RPi.GPIO as GPIO
 import posix
 import errno
-from MCP23008 import IOexpander
+from ioLib import IOexpander
 import time
 import json
 import datetime
