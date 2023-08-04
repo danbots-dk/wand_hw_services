@@ -38,10 +38,11 @@ if not os.path.isfile(lock_file):
 
 # Function for writing data to the FIFO
 def write_to_fifo():
-    delay_s = 0.1
-    start_latch = 1
+    delay_s = 0.2
+    start_latch = 5
     oldTime = time.time()
     while True:
+        #print("write")
         if (time.time()-oldTime >= delay_s or start_latch == 1):
             try:
                 ioInput = {
@@ -64,6 +65,7 @@ def write_to_fifo():
 # Function for reading data from the FIFO
 def read_from_fifo():
     while True:
+        print("read")
         try:
             fifo_fd = posix.open(READ_PIPE_NAME, posix.O_RDONLY)
             buffer_size = 1024
@@ -73,12 +75,13 @@ def read_from_fifo():
             # Obtain I2C lock
             lock = open(lock_file, "r+")
             fcntl.flock(lock, fcntl.LOCK_EX)
+            print((data["setBuzzer"]))
             ioService.sendKillSig(data["sendKillSig"])
             ioService.setBuzzer(data["setBuzzer"])
             ioService.setSpeaker(data["setSpeaker"])
             ioService.setBootloader(data["setBootloader"])
             ioService.setFlash(data["setFlash"])
-            ioService.setDias(int(data["setDias"]))
+            ioService.setDias((data["setDias"]))
             ioService.setIndicatorLED(data["setIndicatorLED"])
             fcntl.flock(lock, fcntl.LOCK_UN)
             lock.close()
