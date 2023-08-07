@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2021 codenio (Aananth K)
 # SPDX-License-Identifier: MIT
-
 #import board
 #import adafruit_mcp4728
 #
@@ -26,10 +25,8 @@
 #
 #mcp4728.reset()  # reset MCP4728
 
-# Simple demo of setting the output voltage of the MCP4725 DAC.
-# Will alternate setting 0V, 1/2VDD, and VDD each second.
-# Author: Tony DiCola
-# License: Public Domain
+
+
 #import time
 #
 ## Import the MCP4725 module.
@@ -50,12 +47,11 @@
 #    time.sleep(2.0)
 #    print('Setting voltage to 1/2 Vdd!')
 #    dac.set_voltage(2048)  # 2048 = half of 4096
-#    time.sleep(2.0)
-#    print('Setting voltage to Vdd!')
-#    dac.set_voltage(4096, True)
-#    time.sleep(2.0)
-
-
+##    time.sleep(2.0)
+##    print('Setting voltage to Vdd!')
+##    dac.set_voltage(4096, True)
+##    time.sleep(2.0)
+#
 #import smbus
 #
 ## I2C address based on pin 2 (A0) and pin 8 (A1)
@@ -249,26 +245,82 @@
 #    #print("Value Channel 0:", value0)
 #    #print("Value Channel 1:", value1)
 #
+#
+#
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-import board
-import adafruit_mcp4728
+#import board
+#import adafruit_mcp4728
+#
+#MCP4728_DEFAULT_ADDRESS = 0x60
+#MCP4728A4_DEFAULT_ADDRESS = 0x64
+#
+#i2c = board.I2C()  # uses board.SCL and board.SDA
+## i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
+##  use for MCP4728 variant
+#mcp4728 = adafruit_mcp4728.MCP4728(i2c, adafruit_mcp4728.MCP4728_DEFAULT_ADDRESS)
+##  use for MCP4728A4 variant
+##  mcp4728 = adafruit_mcp4728.MCP4728(i2c, adafruit_mcp4728.MCP4728A4_DEFAULT_ADDRESS)
+#
+##mcp4728.channel_a.value = 0  # Voltage = VDD
+##mcp4728.channel_b.value = 0  # VDD/2
+##mcp4728.channel_c.value = 0  # VDD/4
+#mcp4728.reset()  # reset MCP4728
+#mcp4728.channel_d.value = 0  # 0V
 
-MCP4728_DEFAULT_ADDRESS = 0x60
-MCP4728A4_DEFAULT_ADDRESS = 0x64
 
-i2c = board.I2C()  # uses board.SCL and board.SDA
-# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
-#  use for MCP4728 variant
-mcp4728 = adafruit_mcp4728.MCP4728(i2c, adafruit_mcp4728.MCP4728_DEFAULT_ADDRESS)
-#  use for MCP4728A4 variant
-#  mcp4728 = adafruit_mcp4728.MCP4728(i2c, adafruit_mcp4728.MCP4728A4_DEFAULT_ADDRESS)
+import smbus2
 
-#mcp4728.channel_a.value = 0  # Voltage = VDD
-#mcp4728.channel_b.value = 0  # VDD/2
-#mcp4728.channel_c.value = 0  # VDD/4
-mcp4728.reset()  # reset MCP4728
-mcp4728.channel_d.value = 0  # 0V
+# Define the I2C bus number (typically 1 on most Raspberry Pi models)
+I2C_BUS = 1
+
+# Initialize the I2C bus
+i2c_bus = smbus2.SMBus(I2C_BUS)
+
+class MCP47CVB02:
+    # Define the DAC's I2C address
+    DAC_ADDRESS = 0x60
+
+    def __init__(self, i2c_bus):
+        self.i2c_bus = i2c_bus
+
+    def set_output_voltage(self, channel, voltage):
+        if channel == 0:
+            command = 0x00  # DAC0 Write
+        elif channel == 1:
+            command = 0x04  # DAC1 Write
+        else:
+            raise ValueError("Invalid channel. Use 0 for DAC0 or 1 for DAC1.")
+
+        # Calculate the 12-bit data value based on the voltage (assuming Vref = 5V)
+        data = int(voltage / 5 * 255)
+        print(0x00+data)
+        # Send the data over I2C
+        self.i2c_bus.write_word_data(self.DAC_ADDRESS, command, data)
+
+# Initialize the DAC object
+dac = MCP47CVB02(i2c_bus)
+
+# Set the output voltage of DAC0 to 2.5V
+dac.set_output_voltage(channel=0, voltage=1)
+
+# Set the output voltage of DAC1 to 3.3V
+dac.set_output_voltage(channel=1, voltage=1)
