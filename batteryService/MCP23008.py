@@ -11,25 +11,26 @@ class IOexpander:
         self.mcp = MCP23008(i2c)
 
         # IO expander
-        self.state_pin = self.mcp.get_pin(6)
-        self.state_pin.direction = digitalio.Direction.INPUT
+        #self.state_pin = self.mcp.get_pin(6)
+        #self.state_pin.direction = digitalio.Direction.INPUT
         
-        self.bat_pg = self.mcp.get_pin(0)
+        # IO expander
+        #self.state_pin = self.mcp.get_pin(6)
+        #self.state_pin.direction = digitalio.Direction.INPUT
+        
+        self.bat_pg = self.mcp.get_pin(7)
         self.bat_pg.direction = digitalio.Direction.INPUT
 
-        self.bat_chg = self.mcp.get_pin(1)
+        self.bat_chg = self.mcp.get_pin(6)
         self.bat_chg.direction = digitalio.Direction.INPUT
 
-        self.cap1 = self.mcp.get_pin(2)
-        self.cap1.direction = digitalio.Direction.INPUT
+        self.buzzer = self.mcp.get_pin(3)
+        self.buzzer.direction = digitalio.Direction.OUTPUT
 
         self.cap1 = self.mcp.get_pin(2)
         self.cap1.direction = digitalio.Direction.INPUT
 
-        self.cap2 = self.mcp.get_pin(3)
-        self.cap2.direction = digitalio.Direction.INPUT
-
-        self.cap2 = self.mcp.get_pin(3)
+        self.cap2 = self.mcp.get_pin(4)
         self.cap2.direction = digitalio.Direction.INPUT
 
         # RPi GPIO
@@ -96,9 +97,9 @@ class IOexpander:
         return self.bat_pg.value
     
     def isCharging(self):
-        # 1: is charging
-        # 0: is not charging
-        return self.bat_chg.value
+        # 0: is charging
+        # 1: is not charging
+        return not(self.bat_chg.value)
 
     def getCap1Val(self):
         return self.cap1.value
