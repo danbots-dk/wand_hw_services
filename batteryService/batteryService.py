@@ -1,6 +1,6 @@
 #!/bin/python3
 from MAX17048 import BatteryService
-from MCP23008 import IOexpander
+from ioLib import IOexpander
 import board
 import json
 import time 
