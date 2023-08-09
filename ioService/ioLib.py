@@ -7,10 +7,22 @@ import datetime
 import pigpio
 import board
 import neopixel
+import adafruit_mcp4728
+import os
 
 class IOexpander:
     def __init__(self,i2c):
+        self.brdVersion = 1.8
+
         self.mcp = MCP23008(i2c)
+        try:
+            self.dac = adafruit_mcp4728.MCP4728(i2c, 0x62)
+        except:
+            try:
+                self.dac = adafruit_mcp4728.MCP4728(i2c, 0x60)
+            except:
+                pass
+
 
         # IO expander
         self.state_pin = self.mcp.get_pin(6)
@@ -22,10 +34,13 @@ class IOexpander:
         self.bat_chg = self.mcp.get_pin(1)
         self.bat_chg.direction = digitalio.Direction.INPUT
 
+        self.buzzer = self.mcp.get_pin(3)
+        self.buzzer.direction = digitalio.Direction.OUTPUT
+
         self.cap1 = self.mcp.get_pin(2)
         self.cap1.direction = digitalio.Direction.INPUT
 
-        self.cap2 = self.mcp.get_pin(3)
+        self.cap2 = self.mcp.get_pin(4)
         self.cap2.direction = digitalio.Direction.INPUT
 
         # RPi GPIO
@@ -65,33 +80,40 @@ class IOexpander:
         GPIO.add_event_detect(self.batInterrupt_pin, GPIO.FALLING, callback=self.bat_interrupt, bouncetime=100)
 
     def sendKillSig(self,state):
+        # TODO: insert clean up routine
+        time.sleep(1)
         if state == True:
             GPIO.setup(self.OnOff_kill, GPIO.OUT)
         else:
             pass
 
 
-    def setFlash(self, state):        
-        if state == True:
-            GPIO.output(self.flash, GPIO.HIGH)
-        else:
-            GPIO.output(self.flash, GPIO.LOW)
+    def setFlash(self, val):
+        if(self.brdVersion > 1.7):
+            self.dac.normalized_value = val
+        else:        
+            if val > 0 :
+                GPIO.output(self.flash, GPIO.HIGH)
+            else:
+                GPIO.output(self.flash, GPIO.LOW)
 
-    def setDias(self, state):
-        if state == True:
-            GPIO.output(self.DIAS, GPIO.HIGH)
-        else:
-            GPIO.output(self.DIAS, GPIO.LOW)
+    def setDias(self, val):
+        if(self.brdVersion > 1.7):
+            self.dac.normalized_value.channel_a = val
+            self.dac.normalized_value.channel_b = val
+        else: 
+            if val > 0:
+                GPIO.output(self.DIAS, GPIO.HIGH)
+            else:
+                GPIO.output(self.DIAS, GPIO.LOW)
     
     def setIndicatorLED(self, val):
         self.pixels[(val[0])] = ((val[1]),(val[2]),(val[3]))
         self.pixels.show()
         
     def setBuzzer(self, state):
-        ##self.buzzer.value = state
-        #print(state)
-        pass
-        #return 1
+        self.buzzer.value = state
+        return 1
 
     def setSpeaker(self, state):
         #self.speaker.value = state
@@ -99,10 +121,13 @@ class IOexpander:
         #return 1
 
     def setBootloader(self, state):
+        # TODO: insert clean up routine
+        time.sleep(1)
         if state == True:
             GPIO.output(self.bootLoader, GPIO.HIGH)
         else:
             GPIO.output(self.bootLoader, GPIO.LOW) 
+        os.system("shutdown -h 0 -r")
 
     def isBattery(self):
         # 1: battery powered
@@ -149,5 +174,11 @@ if __name__ == "__main__":
     import board
     i2c = board.I2C()
     io = IOexpander(i2c)
+    while(1):
+        io.setBuzzer(1)
+        time.sleep(2)
+        io.setBuzzer(0)
+        time.sleep(2)
 
-    io.readConf()
+
+    #io.readConf()
