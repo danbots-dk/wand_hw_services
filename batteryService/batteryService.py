@@ -37,28 +37,28 @@ if not os.path.isfile(lock_file):
     f.close()
 
 while True:
-    if (time.time()-oldTime >= delay_s or start_latch == 1):
+    #if (time.time()-oldTime >= delay_s or start_latch == 1):
         # Obtain I2C lock
-        lock = open(lock_file, "r+")
-        fcntl.flock(lock, fcntl.LOCK_EX)
+    lock = open(lock_file, "r+")
+    fcntl.flock(lock, fcntl.LOCK_EX)
 
-        # Retrieve battery statistics and additional IOexpander data
-        batState = batteryService.writeStats()
-        batState["isCharging"] = ioService.isCharging()
-        batState["isBattery"] = ioService.isBattery()
-        fcntl.flock(lock, fcntl.LOCK_UN)
-        lock.close()
+    # Retrieve battery statistics and additional IOexpander data
+    batState = batteryService.writeStats()
+    batState["isCharging"] = ioService.isCharging()
+    batState["isBattery"] = ioService.isBattery()
+    fcntl.flock(lock, fcntl.LOCK_UN)
+    lock.close()
 
-        try:
-            # Write battery state to the named pipe (FIFO)
-            fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
-            batState = json.dumps(batState, indent=4)
-            posix.write(fifo_fd, batState.encode())
-            posix.close(fifo_fd)
-        except OSError as ex:
-            if ex.errno == errno.ENXIO:
-                pass  # try later
+    try:
+        # Write battery state to the named pipe (FIFO)
+        fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
+        batState = json.dumps(batState, indent=4)
+        posix.write(fifo_fd, batState.encode())
+        posix.close(fifo_fd)
+    except OSError as ex:
+        if ex.errno == errno.ENXIO:
+            pass  # try later
 
-        oldTime = time.time()
-        start_latch = 0
+    oldTime = time.time()
+    start_latch = 0
     time.sleep(0.1)
