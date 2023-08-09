@@ -8,6 +8,7 @@ import pigpio
 import board
 import neopixel
 import adafruit_mcp4728
+import os
 
 class IOexpander:
     def __init__(self,i2c):
@@ -79,6 +80,8 @@ class IOexpander:
         GPIO.add_event_detect(self.batInterrupt_pin, GPIO.FALLING, callback=self.bat_interrupt, bouncetime=100)
 
     def sendKillSig(self,state):
+        # TODO: insert clean up routine
+        time.sleep(1)
         if state == True:
             GPIO.setup(self.OnOff_kill, GPIO.OUT)
         else:
@@ -110,7 +113,6 @@ class IOexpander:
         
     def setBuzzer(self, state):
         self.buzzer.value = state
-        print("buzz buzz")
         return 1
 
     def setSpeaker(self, state):
@@ -119,10 +121,13 @@ class IOexpander:
         #return 1
 
     def setBootloader(self, state):
+        # TODO: insert clean up routine
+        time.sleep(1)
         if state == True:
             GPIO.output(self.bootLoader, GPIO.HIGH)
         else:
             GPIO.output(self.bootLoader, GPIO.LOW) 
+        os.system("shutdown -h 0 -r")
 
     def isBattery(self):
         # 1: battery powered
