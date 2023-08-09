@@ -38,29 +38,31 @@ if not os.path.isfile(lock_file):
 
 # Function for writing data to the FIFO
 def write_to_fifo():
-    delay_s = 0.2
-    start_latch = 5
-    oldTime = time.time()
+    #delay_s = 0.2
+    #start_latch = 5
+    #oldTime = time.time()
+    update_rate = 0.1
     while True:
         #print("write")
-        if (time.time()-oldTime >= delay_s or start_latch == 1):
-            try:
-                ioInput = {
-                    "log_time": str(datetime.datetime.now()),
-                    "cap1val": ioService.getCap1Val(),
-                    "cap2val": ioService.getCap2Val(),
-                    "killSig": ioService.OnOff_interruptSig
-                }
-                fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
-                ioInput = json.dumps(ioInput, indent=4)
-                posix.write(fifo_fd, ioInput.encode())
-                posix.close(fifo_fd)
-            except OSError as ex:
-                if ex.errno == errno.ENXIO:
-                    pass  # try later
+        #if (time.time()-oldTime >= delay_s or start_latch == 1):
+        try:
+            ioInput = {
+                "log_time": str(datetime.datetime.now()),
+                "cap1val": ioService.getCap1Val(),
+                "cap2val": ioService.getCap2Val(),
+                "killSig": ioService.OnOff_interruptSig
+            }
+            fifo_fd = posix.open(WRITE_PIPE_NAME, posix.O_WRONLY | posix.O_NONBLOCK)
+            ioInput = json.dumps(ioInput, indent=4)
+            posix.write(fifo_fd, ioInput.encode())
+            posix.close(fifo_fd)
+        except OSError as ex:
+            if ex.errno == errno.ENXIO:
+                pass  # try later
 
-            oldTime = time.time()
-            start_latch = 0
+        #oldTime = time.time()
+        #start_latch = 0
+        time.sleep(update_rate)
 
 # Function for reading data from the FIFO
 def read_from_fifo():
