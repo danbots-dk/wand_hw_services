@@ -19,7 +19,7 @@ batteryService = BatteryService(i2c)
 WRITE_PIPE_NAME = "/tmp/battery_stats"
 
 # Define the delay interval for updating battery stats
-delay_s = 60
+delay_s = 5
 start_latch = 1
 oldTime = time.time()
 
@@ -61,3 +61,4 @@ while True:
 
         oldTime = time.time()
         start_latch = 0
+    time.sleep(0.1)
