@@ -125,9 +125,10 @@ class IOexpander:
         time.sleep(1)
         if state == True:
             GPIO.output(self.bootLoader, GPIO.HIGH)
+            os.system("shutdown -h 0 -r")
         else:
             GPIO.output(self.bootLoader, GPIO.LOW) 
-        os.system("shutdown -h 0 -r")
+        
 
     def isBattery(self):
         # 1: battery powered
