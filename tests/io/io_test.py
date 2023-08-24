@@ -11,7 +11,7 @@ data = {
     "sendKillSig": False,
     "setBuzzer": False,
     "setSpeaker": False,
-    "setBootloader": True,
+    "setBootloader": False,
     "setFlash": 0,
     "setDias": 0,
     "setIndicatorLED": [0, 0,0,0]
