@@ -57,13 +57,13 @@ class IOexpander:
         GPIO.setup(self.batInterrupt_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.OnOff_interrupt_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        pixel_pin = board.D18
+        pixel_pin = board.D10
         # The number of NeoPixels
-        num_pixels = 2
+        num_pixels = 1
         ORDER = neopixel.RGB
         brightness = 0.5
         self.pixels = neopixel.NeoPixel(
-            pixel_pin, num_pixels, brightness=brightness, auto_write=False, pixel_order=ORDER
+            pixel_pin, num_pixels, brightness=brightness, pixel_order=ORDER
         )
 
         self.OnOff_interruptSig = 0
@@ -81,15 +81,15 @@ class IOexpander:
 
     def sendKillSig(self,state):
         # TODO: insert clean up routine
-        time.sleep(1)
         if state == True:
+            time.sleep(1)
             GPIO.setup(self.OnOff_kill, GPIO.OUT)
         else:
             pass
 
 
     def setFlash(self, val):
-        if(self.brdVersion > 1.7):
+        if(self.brdVersion > 1.8):
             self.dac.normalized_value = val
         else:        
             if val > 0 :
@@ -98,7 +98,7 @@ class IOexpander:
                 GPIO.output(self.flash, GPIO.LOW)
 
     def setDias(self, val):
-        if(self.brdVersion > 1.7):
+        if(self.brdVersion > 1.8):
             self.dac.normalized_value.channel_a = val
             self.dac.normalized_value.channel_b = val
         else: 
@@ -108,8 +108,9 @@ class IOexpander:
                 GPIO.output(self.DIAS, GPIO.LOW)
     
     def setIndicatorLED(self, val):
+        print(val)
         self.pixels[(val[0])] = ((val[1]),(val[2]),(val[3]))
-        self.pixels.show()
+        #self.pixels.show()
         
     def setBuzzer(self, state):
         self.buzzer.value = state
@@ -122,8 +123,9 @@ class IOexpander:
 
     def setBootloader(self, state):
         # TODO: insert clean up routine
-        time.sleep(1)
+        
         if state == True:
+            time.sleep(1)
             GPIO.output(self.bootLoader, GPIO.HIGH)
             os.system("shutdown -h 0 -r")
         else:
