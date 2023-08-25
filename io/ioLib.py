@@ -63,7 +63,7 @@ class IOexpander:
         ORDER = neopixel.RGB
         brightness = 0.5
         self.pixels = neopixel.NeoPixel(
-            pixel_pin, num_pixels, brightness=brightness, pixel_order=ORDER
+            pixel_pin, num_pixels, brightness=brightness, pixel_order=ORDER, auto_write=False
         )
 
         self.OnOff_interruptSig = 0
@@ -108,9 +108,9 @@ class IOexpander:
                 GPIO.output(self.DIAS, GPIO.LOW)
     
     def setIndicatorLED(self, val):
-        print(val)
         self.pixels[(val[0])] = ((val[1]),(val[2]),(val[3]))
-        #self.pixels.show()
+        self.pixels.show()
+        
         
     def setBuzzer(self, state):
         self.buzzer.value = state
@@ -178,10 +178,10 @@ if __name__ == "__main__":
     i2c = board.I2C()
     io = IOexpander(i2c)
     while(1):
-        io.setBuzzer(1)
+        #io.setIndicatorLED([0,100,100,100])
         time.sleep(2)
         io.setBuzzer(0)
         time.sleep(2)
 
 
-    #io.readConf()
+        io.readConf()
