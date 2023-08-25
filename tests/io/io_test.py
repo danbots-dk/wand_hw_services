@@ -14,7 +14,7 @@ data = {
     "setBootloader": False,
     "setFlash": 0,
     "setDias": 0,
-    "setIndicatorLED": [0, 0,0,0]
+    "setIndicatorLED": [0,100,60,0]
 }
 
 write_pipe_name = "/tmp/io_conf"
