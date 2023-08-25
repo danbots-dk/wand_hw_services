@@ -12,6 +12,10 @@ import datetime
 import threading
 import os
 import fcntl
+import logging
+
+# Initialize the logging module
+logging.basicConfig(filename='/home/alexander/log.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Initialize I2C and IOexpander
 i2c = board.I2C()
@@ -38,13 +42,8 @@ if not os.path.isfile(lock_file):
 
 # Function for writing data to the FIFO
 def write_to_fifo():
-    #delay_s = 0.2
-    #start_latch = 5
-    #oldTime = time.time()
     update_rate = 0.1
     while True:
-        #print("write")
-        #if (time.time()-oldTime >= delay_s or start_latch == 1):
         try:
             ioInput = {
                 "log_time": str(datetime.datetime.now()),
@@ -60,44 +59,51 @@ def write_to_fifo():
             if ex.errno == errno.ENXIO:
                 pass  # try later
 
-        #oldTime = time.time()
-        #start_latch = 0
         time.sleep(update_rate)
 
 # Function for reading data from the FIFO
 def read_from_fifo():
     while True:
-        print("read")
         try:
+            logging.info("Reading from FIFO")
             fifo_fd = posix.open(READ_PIPE_NAME, posix.O_RDONLY)
             buffer_size = 1024
             data = posix.read(fifo_fd, buffer_size)
             posix.close(fifo_fd)
             data = json.loads(str(data.decode()))
+
+            
+            logging.info("Received data from FIFO: %s", data)
             # Obtain I2C lock
             lock = open(lock_file, "r+")
             fcntl.flock(lock, fcntl.LOCK_EX)
-            print((data["setBuzzer"]))
-            ioService.sendKillSig(data["sendKillSig"])
+            
+            #ioService.sendKillSig(data["sendKillSig"])
             ioService.setBuzzer(data["setBuzzer"])
             ioService.setSpeaker(data["setSpeaker"])
-            ioService.setBootloader(data["setBootloader"])
+            #ioService.setBootloader(data["setBootloader"])
             ioService.setFlash(data["setFlash"])
-            ioService.setDias((data["setDias"]))
+            ioService.setDias(data["setDias"])
+            logging.info("Received data from FIFO: %s", data["setIndicatorLED"])
             ioService.setIndicatorLED(data["setIndicatorLED"])
+            
             fcntl.flock(lock, fcntl.LOCK_UN)
             lock.close()
+
         except:
             pass
 
-# Create separate threads for read and write operations
-write_thread = threading.Thread(target=write_to_fifo)
-read_thread = threading.Thread(target=read_from_fifo)
+if __name__ == "__main__":
+    logging.info("Script started")
 
-# Start the threads
-write_thread.start()
-read_thread.start()
+    # Create separate threads for read and write operations
+    write_thread = threading.Thread(target=write_to_fifo)
+    read_thread = threading.Thread(target=read_from_fifo)
 
-# Wait for the threads to complete
-write_thread.join()
-read_thread.join()
+    # Start the threads
+    write_thread.start()
+    read_thread.start()
+
+    # Wait for the threads to complete
+    write_thread.join()
+    read_thread.join()
