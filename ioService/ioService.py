@@ -14,6 +14,9 @@ import os
 import fcntl
 import logging
 
+
+data = None
+
 # Initialize the logging module
 logging.basicConfig(filename='/home/alexander/log.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -63,6 +66,7 @@ def write_to_fifo():
 
 # Function for reading data from the FIFO
 def read_from_fifo():
+    global data
     while True:
         try:
             logging.info("Reading from FIFO")
@@ -72,38 +76,52 @@ def read_from_fifo():
             posix.close(fifo_fd)
             data = json.loads(str(data.decode()))
 
-            
-            logging.info("Received data from FIFO: %s", data)
+            #logging.info("Received data from FIFO: %s", data)
             # Obtain I2C lock
-            lock = open(lock_file, "r+")
-            fcntl.flock(lock, fcntl.LOCK_EX)
-            
-            ioService.sendKillSig(data["sendKillSig"])
-            ioService.setBuzzer(data["setBuzzer"])
-            ioService.setSpeaker(data["setSpeaker"])
-            ioService.setBootloader(data["setBootloader"])
-            ioService.setFlash(data["setFlash"])
-            ioService.setDias(data["setDias"])
-            logging.info("Received data from FIFO: %s", data["setIndicatorLED"])
-            ioService.setIndicatorLED(data["setIndicatorLED"])
-            
-            fcntl.flock(lock, fcntl.LOCK_UN)
-            lock.close()
 
+            #ioService.sendKillSig(data["sendKillSig"])
+            #ioService.setBuzzer(data["setBuzzer"])
+            #ioService.setSpeaker(data["setSpeaker"])
+            #ioService.setBootloader(data["setBootloader"])
+            #ioService.setFlash(data["setFlash"])
+            #ioService.setDias(data["setDias"])
+            #ioService.setIndicatorLED(data["setIndicatorLED"])
+            test=ioService.readConf(data)
         except:
             pass
 
+def read_conf():
+    endTime = time.time()
+    while(1):
+        lock = open(lock_file, "r+")
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        test=ioService.readConf(data)
+        fcntl.flock(lock, fcntl.LOCK_UN)
+        lock.close()
+        #time.sleep(0.001)
+        #startTime = time.time()
+        #if startTime-endTime > 1:
+        #    endTime = time.time()
+
+
+
 if __name__ == "__main__":
     logging.info("Script started")
+
+
+    # Create a separate thread for ioService operations
+    io_service_thread = threading.Thread(target=read_conf)
 
     # Create separate threads for read and write operations
     write_thread = threading.Thread(target=write_to_fifo)
     read_thread = threading.Thread(target=read_from_fifo)
 
     # Start the threads
+    io_service_thread.start()
     write_thread.start()
     read_thread.start()
 
     # Wait for the threads to complete
+    io_service_thread.join()
     write_thread.join()
     read_thread.join()
