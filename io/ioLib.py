@@ -9,6 +9,7 @@ import board
 import neopixel
 import adafruit_mcp4728
 import os
+import logging
 
 class IOexpander:
     def __init__(self,i2c):
@@ -22,7 +23,7 @@ class IOexpander:
                 self.dac = adafruit_mcp4728.MCP4728(i2c, 0x60)
             except:
                 pass
-
+        logging.basicConfig(filename='/home/alexander/log2.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # IO expander
         self.state_pin = self.mcp.get_pin(6)
@@ -59,7 +60,7 @@ class IOexpander:
 
         pixel_pin = board.D10
         # The number of NeoPixels
-        num_pixels = 1
+        num_pixels = 4
         ORDER = neopixel.RGB
         brightness = 0.5
         self.pixels = neopixel.NeoPixel(
@@ -159,10 +160,18 @@ class IOexpander:
             }
         return ioInfo
 
-    def readConf(self):
-        fifo_read = open('/tmp/io_conf', 'r')
-        data = json.load(fifo_read)
-        
+    def readConf(self,data=None):
+        if data == None:
+            data = {
+                "sendKillSig": False,
+                "setBuzzer": False,
+                "setSpeaker": False,
+                "setBootloader": False,
+                "setFlash": 0,
+                "setDias": 0,
+                "setIndicatorLED": [0,0,0,0]
+            }      
+        #logging.info("\nReceived data from FIFO: %s", data)
         self.sendKillSig(data["sendKillSig"])
         self.setBuzzer(data["setBuzzer"])
         self.setSpeaker(data["setSpeaker"])
@@ -170,7 +179,8 @@ class IOexpander:
         self.setDias(data["setDias"])
         self.setFlash(data["setFlash"])
         self.setIndicatorLED(data["setIndicatorLED"])
-        fifo_read.close()
+        #print("tesr321")
+        return "test123"
         #print(data["battery"]["Alert"])
 
 if __name__ == "__main__":
