@@ -78,10 +78,10 @@ def read_from_fifo():
             lock = open(lock_file, "r+")
             fcntl.flock(lock, fcntl.LOCK_EX)
             
-            #ioService.sendKillSig(data["sendKillSig"])
+            ioService.sendKillSig(data["sendKillSig"])
             ioService.setBuzzer(data["setBuzzer"])
             ioService.setSpeaker(data["setSpeaker"])
-            #ioService.setBootloader(data["setBootloader"])
+            ioService.setBootloader(data["setBootloader"])
             ioService.setFlash(data["setFlash"])
             ioService.setDias(data["setDias"])
             logging.info("Received data from FIFO: %s", data["setIndicatorLED"])
