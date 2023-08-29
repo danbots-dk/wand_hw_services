@@ -68,6 +68,7 @@ def write_to_fifo():
 def read_from_fifo():
     global data
     while True:
+        # updates only with new values
         try:
             logging.info("Reading from FIFO")
             fifo_fd = posix.open(READ_PIPE_NAME, posix.O_RDONLY)
@@ -75,42 +76,25 @@ def read_from_fifo():
             data = posix.read(fifo_fd, buffer_size)
             posix.close(fifo_fd)
             data = json.loads(str(data.decode()))
-
-            #logging.info("Received data from FIFO: %s", data)
-            # Obtain I2C lock
-
-            #ioService.sendKillSig(data["sendKillSig"])
-            #ioService.setBuzzer(data["setBuzzer"])
-            #ioService.setSpeaker(data["setSpeaker"])
-            #ioService.setBootloader(data["setBootloader"])
-            #ioService.setFlash(data["setFlash"])
-            #ioService.setDias(data["setDias"])
-            #ioService.setIndicatorLED(data["setIndicatorLED"])
-            test=ioService.readConf(data)
         except:
-            pass
+            logging.info("Could not read from /tmp/io_conf")
 
-def read_conf():
-    endTime = time.time()
+
+def apply_conf():
     while(1):
         lock = open(lock_file, "r+")
         fcntl.flock(lock, fcntl.LOCK_EX)
-        test=ioService.readConf(data)
+        ioService.readConf(data)
         fcntl.flock(lock, fcntl.LOCK_UN)
         lock.close()
-        #time.sleep(0.001)
-        #startTime = time.time()
-        #if startTime-endTime > 1:
-        #    endTime = time.time()
-
 
 
 if __name__ == "__main__":
-    logging.info("Script started")
-
+    logging.info("ioService script started")
 
     # Create a separate thread for ioService operations
-    io_service_thread = threading.Thread(target=read_conf)
+    # Ensures values are kept updated
+    io_service_thread = threading.Thread(target=apply_conf)
 
     # Create separate threads for read and write operations
     write_thread = threading.Thread(target=write_to_fifo)
