@@ -171,7 +171,6 @@ class IOexpander:
                 "setDias": 0,
                 "setIndicatorLED": [0,0,0,0]
             }      
-        #logging.info("\nReceived data from FIFO: %s", data)
         self.sendKillSig(data["sendKillSig"])
         self.setBuzzer(data["setBuzzer"])
         self.setSpeaker(data["setSpeaker"])
@@ -179,16 +178,14 @@ class IOexpander:
         self.setDias(data["setDias"])
         self.setFlash(data["setFlash"])
         self.setIndicatorLED(data["setIndicatorLED"])
-        #print("tesr321")
-        return "test123"
-        #print(data["battery"]["Alert"])
+
+        return "1"
 
 if __name__ == "__main__":
     import board
     i2c = board.I2C()
     io = IOexpander(i2c)
     while(1):
-        #io.setIndicatorLED([0,100,100,100])
         time.sleep(2)
         io.setBuzzer(0)
         time.sleep(2)
