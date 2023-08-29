@@ -11,10 +11,10 @@ data = {
     "sendKillSig": False,
     "setBuzzer": False,
     "setSpeaker": False,
-    "setBootloader": False,
+    "setBootloader": True,
     "setFlash": 0,
     "setDias": 0,
-    "setIndicatorLED": [1,100,50,50]
+    "setIndicatorLED": [0,0,0,0]
 }
 
 write_pipe_name = "/tmp/io_conf"
