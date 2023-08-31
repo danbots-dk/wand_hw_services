@@ -23,7 +23,7 @@ class IOexpander:
                 self.dac = adafruit_mcp4728.MCP4728(i2c, 0x60)
             except:
                 pass
-        logging.basicConfig(filename='/home/alexander/log2.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(filename='/var/log/io.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # IO expander
         self.state_pin = self.mcp.get_pin(6)
