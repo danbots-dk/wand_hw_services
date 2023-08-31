@@ -18,7 +18,7 @@ import logging
 data = None
 
 # Initialize the logging module
-logging.basicConfig(filename='/home/alexander/log.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='/var/log/ioService.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Initialize I2C and IOexpander
 i2c = board.I2C()
