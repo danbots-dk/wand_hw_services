@@ -1,0 +1,17 @@
+Package: danbots-wand-hw-services
+Version: 1.0.0
+Architecture: all
+Maintainer: Peter Holm <plh@danbots.com>
+Depends: python3 (>=3.8)
+Section: wand/danbots
+Priority: optional
+Description: HW services for WAND
+ The package include the following services:
+ .
+ Battery service
+    This service collect battery and power status
+ IMU service
+    This service collect imu rotation data
+ IO service
+    This service writes and collects data to and from various IO sensors
+ 

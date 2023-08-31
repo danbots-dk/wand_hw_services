@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+# enable i2c
+dtparam i2c_arm=on
+modprobe i2c-dev
+
+# install requirements
+pip install -r /usr/local/bin/wand/requirements.txt
+
+systemctl start batteryService

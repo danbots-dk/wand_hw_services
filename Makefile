@@ -1,5 +1,10 @@
 #	Makefile for hw services
 
+VERSION=1.0-0
+PKG_NAME=danbots-wand-hw-services-$(VERSION)
+PKG_FOLDER=tmp/package
+DEST_FOLDER=/usr/local/bin/wand-hw
+
 help:
 	@echo "make install           Install the services"
 	@echo "make uninstall         Uninstall the services"
@@ -52,6 +57,28 @@ uninstall-io:
 	sudo rm -f /usr/local/bin/ioService.py 
 	sudo rm -f /usr/lib/python3.9/ioLib.py
 	sudo rm -f /etc/systemd/system/ioService.service
+
+set_i2c:
+	dtparam i2c_arm=on
+	modprobe i2c-dev
+
+pkg-copy:
+	mkdir -p $(PKG_FOLDER) 
+	mkdir -p $(PKG_FOLDER)/usr/local/bin/wand $(PKG_FOLDER)/etc/systemd/system/
+	cp requirements.txt $(PKG_FOLDER)/usr/local/bin/wand
+	cp batteryService/MAX17048.py batteryService/batteryService.py $(PKG_FOLDER)/usr/local/bin/wand
+	cp batteryService/batteryService.service $(PKG_FOLDER)/etc/systemd/system/
+
+deb-pkg: pkg-copy
+	cp -r -p deb-pkg/DEBIAN $(PKG_FOLDER)
+	dpkg-deb --build --root-owner-group -Zxz $(PKG_FOLDER) tmp/$(PKG_NAME).deb
+
+pkg-push:
+	rcp tmp/$(PKG_NAME).deb  danbots:/var/www/apt/simple/pool/wand/
+	rsh danbots /var/www/apt/simple/scan
+
+clean-pkg:
+	rm -rf $(PKG_FOLDER)
 
 install: install-battery install-imu install-io
 	@echo "All services installed"

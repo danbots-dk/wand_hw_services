@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# install requirements
+
+systemctl stop batteryService
