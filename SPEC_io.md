@@ -50,7 +50,7 @@ No configuration except installation is needed.
 ## User interface
 
 
-The input data is available at /tmp/io_stats in the following JSON structure 
+The input data is available at /var/run/wand/io_stats in the following JSON structure 
 ```javascript
 ioInput =  {
     "log_time": dateTime,

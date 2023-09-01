@@ -34,7 +34,7 @@ The service shutsdown gracefully within 3 seconds
 The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
 
 ## User interface
-The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
+The data is written to a named pipe available at /var/run/wand/battery_stats in the following JSON structure 
 ```javascript
 batteryInfo = {
         "log_time": datetime,
