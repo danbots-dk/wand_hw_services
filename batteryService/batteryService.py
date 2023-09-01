@@ -16,6 +16,8 @@ try:
 except FileExistsError:
    pass
 
+# Initialize the logging module
+logging.basicConfig(filename='/var/log/batteryService.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Initialize I2C and create instances of BatteryService and IOexpander
 i2c = board.I2C()
@@ -64,6 +66,7 @@ while True:
         posix.close(fifo_fd)
     except OSError as ex:
         if ex.errno == errno.ENXIO:
+            logging.info("Could not write to /var/run/wand/battery_stats")
             pass  # try later
 
     oldTime = time.time()
