@@ -9,12 +9,19 @@ import posix
 import errno
 import fcntl
 
+
+try:
+   os.makedirs("/var/run/wand")
+except FileExistsError:
+   pass
+
+   
 # Initialize the I2C and LSM6DS3 sensor
 i2c = board.I2C()
 sox = LSM6DS3(i2c)
 
 # Define the path for the named pipe (FIFO)
-WRITE_PIPE_NAME = "/tmp/imu_stats"
+WRITE_PIPE_NAME = "/var/run/wand/imu_stats"
 
 # Define the delay and latch variables
 delay_s = 0.1
