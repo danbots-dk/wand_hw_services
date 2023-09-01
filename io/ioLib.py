@@ -26,16 +26,16 @@ class IOexpander:
         logging.basicConfig(filename='/var/log/io.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # IO expander
-        self.state_pin = self.mcp.get_pin(6)
+        self.state_pin = self.mcp.get_pin(0)
         self.state_pin.direction = digitalio.Direction.INPUT
         
-        self.bat_pg = self.mcp.get_pin(0)
+        self.bat_pg = self.mcp.get_pin(7)
         self.bat_pg.direction = digitalio.Direction.INPUT
 
-        self.bat_chg = self.mcp.get_pin(1)
+        self.bat_chg = self.mcp.get_pin(6)
         self.bat_chg.direction = digitalio.Direction.INPUT
 
-        self.buzzer = self.mcp.get_pin(3)
+        self.buzzer = self.mcp.get_pin(5)
         self.buzzer.direction = digitalio.Direction.OUTPUT
 
         self.cap1 = self.mcp.get_pin(2)
@@ -186,9 +186,11 @@ if __name__ == "__main__":
     i2c = board.I2C()
     io = IOexpander(i2c)
     while(1):
+        print(f"pg: {io.isBattery()}")
+        print(f"chg: {io.isCharging()}")
         time.sleep(2)
-        io.setBuzzer(0)
-        time.sleep(2)
+        #io.setBuzzer(0)
+        #time.sleep(2)
 
 
-        io.readConf()
+        #io.readConf()
