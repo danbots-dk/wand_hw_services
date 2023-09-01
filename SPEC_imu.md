@@ -8,7 +8,7 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp imuService/imuService.py /usr/local/bin/
+sudo cp imuService/imuService.py /usr/local/bin/wand
 sudo cp imuService/imuService.service /etc/systemd/system/
 
 sudo service imuService start

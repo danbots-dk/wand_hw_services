@@ -8,8 +8,8 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp batteryService/MAX17048.py /usr/local/bin/
-sudo cp batteryService/batteryService.py /usr/local/bin/
+sudo cp batteryService/MAX17048.py /usr/local/bin/wand
+sudo cp batteryService/batteryService.py /usr/local/bin/wand
 sudo cp batteryService/batteryService.service /etc/systemd/system/
 
 sudo service batteryService start

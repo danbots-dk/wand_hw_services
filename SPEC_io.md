@@ -9,7 +9,7 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp ioService/ioService.py /usr/local/bin/
+sudo cp ioService/ioService.py /usr/local/bin/wand
 sudo cp io/ioLib.py /usr/lib/python3.9/ioLib.py
 sudo cp ioService/ioService.service /etc/systemd/system/
 
