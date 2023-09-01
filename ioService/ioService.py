@@ -15,7 +15,12 @@ import fcntl
 import logging
 
 
-data = None
+
+try:
+   os.makedirs("/var/run/wand")
+except FileExistsError:
+   pass
+
 
 # Initialize the logging module
 logging.basicConfig(filename='/var/log/ioService.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -25,8 +30,10 @@ i2c = board.I2C()
 ioService = IOexpander(i2c)
 
 # Define the paths for the named pipes (FIFO)
-WRITE_PIPE_NAME = "/tmp/io_stats"
-READ_PIPE_NAME = "/tmp/io_conf"
+WRITE_PIPE_NAME = "/var/run/wand/io_stats"
+READ_PIPE_NAME = "/var/run/wand/io_conf"
+
+data = None
 
 # Create the named pipes if they don't exist
 if not os.path.exists(WRITE_PIPE_NAME):
@@ -77,7 +84,7 @@ def read_from_fifo():
             posix.close(fifo_fd)
             data = json.loads(str(data.decode()))
         except:
-            logging.info("Could not read from /tmp/io_conf")
+            logging.info("Could not read from /var/run/wand/io_conf")
 
 
 def apply_conf():

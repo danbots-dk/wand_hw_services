@@ -10,13 +10,20 @@ import posix
 import errno
 import fcntl
 
+
+try:
+   os.makedirs("/var/run/wand")
+except FileExistsError:
+   pass
+
+
 # Initialize I2C and create instances of BatteryService and IOexpander
 i2c = board.I2C()
 ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
 
 # Define the path for the named pipe (FIFO)
-WRITE_PIPE_NAME = "/tmp/battery_stats"
+WRITE_PIPE_NAME = "/var/run/wand/battery_stats"
 
 # Define the delay interval for updating battery stats
 delay_s = 5
