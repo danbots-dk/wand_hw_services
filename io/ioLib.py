@@ -47,11 +47,11 @@ class IOexpander:
 
         # RPi GPIO
         self.bootLoader = 4
-        self.OnOff_interrupt_button = 27
-        self.OnOff_kill = 22
-        self.batInterrupt_pin = 17
         self.DIAS = 12
         self.flash = 13
+        self.batInterrupt_pin = 17        
+        self.OnOff_kill = 22
+        self.OnOff_interrupt_button = 27
 
         GPIO.setup(self.bootLoader, GPIO.OUT)
         GPIO.setup(self.DIAS, GPIO.OUT)
@@ -59,8 +59,8 @@ class IOexpander:
         GPIO.setup(self.batInterrupt_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.OnOff_interrupt_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+        # Neopixel
         pixel_pin = board.D10
-        # The number of NeoPixels
         num_pixels = 4
         ORDER = neopixel.RGB
         brightness = 0.5
