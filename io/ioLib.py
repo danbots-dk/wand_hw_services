@@ -10,6 +10,12 @@ import neopixel
 import adafruit_mcp4728
 import os
 import logging
+import busio
+from adafruit_bus_device.i2c_device import I2CDevice
+from tmp1075 import TMP1075
+
+
+
 
 class IOexpander:
     def __init__(self,i2c):
@@ -71,6 +77,8 @@ class IOexpander:
         self.OnOff_interruptSig = 0
         self.createOnOffInterrupt()
         logging.info("io service started")
+
+        self.tmp1075 = TMP1075(0x48)
 
     def OnOff_interrupt(self, channel):
         self.OnOff_interruptSig = 1
@@ -150,6 +158,9 @@ class IOexpander:
     def getCap2Val(self):
         return self.cap2.value
 
+    def carrier_board_temp(self):
+        return self.tmp1075.get_temperature()
+
     def writeStats(self):
         ioInfo = {
         "log_time": str(datetime.datetime.now()),
@@ -157,7 +168,8 @@ class IOexpander:
         "cap2val": f"{self.getCap2Val()}",
         "isBattery": f"{self.isBattery()}",
         "isCharging": f"{self.isCharging()}",
-        "killSig": f"{self.OnOff_interruptSig}"
+        "killSig": f"{self.OnOff_interruptSig}",
+        "carrier_temp": f"{self.carrier_board_temp()}"
             }
         return ioInfo
 
@@ -187,6 +199,6 @@ if __name__ == "__main__":
     i2c = board.I2C()
     io = IOexpander(i2c)
     while(1):
-        print(f"pg: {io.isBattery()}")
+        print(f"pg: {io.get_temperature()}")
         print(f"chg: {io.isCharging()}")
         time.sleep(2)

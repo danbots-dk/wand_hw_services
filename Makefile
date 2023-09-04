@@ -46,6 +46,7 @@ install-io:
 	pip install -r requirements.txt
 	sudo cp ioService/ioService.py /usr/local/bin/wand/
 	sudo cp io/ioLib.py /usr/lib/python3.9/ioLib.py
+	sudo cp io/tmp1075.py /usr/lib/python3.9/tmp1075.py
 	sudo cp ioService/ioService.service /etc/systemd/system/
 	sudo service ioService start
 
@@ -54,6 +55,7 @@ uninstall-io:
 	systemctl stop ioService.service
 	sudo rm -f /usr/local/bin/wand/ioService.py 
 	sudo rm -f /usr/lib/python3.9/ioLib.py
+	sudo rm -f /usr/lib/python3.9/tmp1075.py
 	sudo rm -f /etc/systemd/system/ioService.service
 
 install: install-battery install-imu install-io
