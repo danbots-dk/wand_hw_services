@@ -28,21 +28,22 @@ class IOexpander:
         # IO expander
         self.state_pin = self.mcp.get_pin(0)
         self.state_pin.direction = digitalio.Direction.INPUT
-        
-        self.bat_pg = self.mcp.get_pin(7)
-        self.bat_pg.direction = digitalio.Direction.INPUT
-
-        self.bat_chg = self.mcp.get_pin(6)
-        self.bat_chg.direction = digitalio.Direction.INPUT
-
-        self.buzzer = self.mcp.get_pin(5)
-        self.buzzer.direction = digitalio.Direction.OUTPUT
 
         self.cap1 = self.mcp.get_pin(2)
         self.cap1.direction = digitalio.Direction.INPUT
 
-        self.cap2 = self.mcp.get_pin(4)
+        self.cap2 = self.mcp.get_pin(3)
         self.cap2.direction = digitalio.Direction.INPUT
+
+        self.buzzer = self.mcp.get_pin(5)
+        self.buzzer.direction = digitalio.Direction.OUTPUT
+
+        self.bat_chg = self.mcp.get_pin(6)
+        self.bat_chg.direction = digitalio.Direction.INPUT        
+        
+        self.bat_pg = self.mcp.get_pin(7)
+        self.bat_pg.direction = digitalio.Direction.INPUT
+
 
         # RPi GPIO
         self.bootLoader = 4
@@ -69,7 +70,7 @@ class IOexpander:
 
         self.OnOff_interruptSig = 0
         self.createOnOffInterrupt()
-        print("io service started")
+        logging.info("io service started")
 
     def OnOff_interrupt(self, channel):
         self.OnOff_interruptSig = 1
@@ -189,8 +190,3 @@ if __name__ == "__main__":
         print(f"pg: {io.isBattery()}")
         print(f"chg: {io.isCharging()}")
         time.sleep(2)
-        #io.setBuzzer(0)
-        #time.sleep(2)
-
-
-        #io.readConf()
