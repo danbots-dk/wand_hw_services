@@ -2,7 +2,7 @@
 Description=Starts the io service. Configured with both read and write capabilities in a non blocking fashion.
 
 [Service]
-ExecStart=/usr/bin/python3 /usr/local/bin/ioService.py
+ExecStart=/usr/bin/python3 /usr/local/bin/wand/ioService.py
 WorkingDirectory=/usr/local/bin/
 Restart=on-failure
 

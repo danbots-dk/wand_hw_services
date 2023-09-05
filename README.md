@@ -19,3 +19,8 @@ This service collect imu rotation data
 ## IO service
 This service writes and collects data to and from various IO sensors
 [Specification](SPEC_io.md)
+
+## Eeprom library
+This service writes and collects data to and from various IO sensors
+[Specification](SPEC_eeprom.md)
+

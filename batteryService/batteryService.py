@@ -10,13 +10,22 @@ import posix
 import errno
 import fcntl
 
+
+try:
+   os.makedirs("/var/run/wand")
+except FileExistsError:
+   pass
+
+# Initialize the logging module
+logging.basicConfig(filename='/var/log/batteryService.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # Initialize I2C and create instances of BatteryService and IOexpander
 i2c = board.I2C()
 ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
 
 # Define the path for the named pipe (FIFO)
-WRITE_PIPE_NAME = "/tmp/battery_stats"
+WRITE_PIPE_NAME = "/var/run/wand/battery_stats"
 
 # Define the delay interval for updating battery stats
 delay_s = 5
@@ -57,6 +66,7 @@ while True:
         posix.close(fifo_fd)
     except OSError as ex:
         if ex.errno == errno.ENXIO:
+            logging.info("Could not write to /var/run/wand/battery_stats")
             pass  # try later
 
     oldTime = time.time()

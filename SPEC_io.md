@@ -9,8 +9,9 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp ioService/ioService.py /usr/local/bin/
+sudo cp ioService/ioService.py /usr/local/bin/wand
 sudo cp io/ioLib.py /usr/lib/python3.9/ioLib.py
+sudo cp io/tmp1075.py /usr/lib/python3.9/tmp1075.py
 sudo cp ioService/ioService.service /etc/systemd/system/
 
 sudo service ioService start
@@ -50,7 +51,7 @@ No configuration except installation is needed.
 ## User interface
 
 
-The input data is available at /tmp/io_stats in the following JSON structure 
+The input data is available at /var/run/wand/io_stats in the following JSON structure 
 ```javascript
 ioInput =  {
     "log_time": dateTime,

@@ -8,8 +8,8 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp batteryService/MAX17048.py /usr/local/bin/
-sudo cp batteryService/batteryService.py /usr/local/bin/
+sudo cp batteryService/MAX17048.py /usr/local/bin/wand
+sudo cp batteryService/batteryService.py /usr/local/bin/wand
 sudo cp batteryService/batteryService.service /etc/systemd/system/
 
 sudo service batteryService start
@@ -34,7 +34,7 @@ The service shutsdown gracefully within 3 seconds
 The service relies on the MAX17048 IC which automatically calibrates for charge leves, time estimation, etc. Hence little input from the user is needed.
 
 ## User interface
-The data is written to a named pipe available at /tmp/bat_stats in the following JSON structure 
+The data is written to a named pipe available at /var/run/wand/battery_stats in the following JSON structure 
 ```javascript
 batteryInfo = {
         "log_time": datetime,

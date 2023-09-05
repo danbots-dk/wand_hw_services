@@ -8,7 +8,7 @@ Raspberry PI Os lite:  2023-05-03-raspios-bullseye-armhf-lite
 
 ```
 pip install -r requirements.txt
-sudo cp imuService/imuService.py /usr/local/bin/
+sudo cp imuService/imuService.py /usr/local/bin/wand
 sudo cp imuService/imuService.service /etc/systemd/system/
 
 sudo service imuService start
@@ -36,7 +36,7 @@ No configuration needed.
 
 ## User interface
 
-The data is written to a named pipe available at /tmp/imu_stats in the following JSON structure 
+The data is written to a named pipe available at /var/run/wand/imu_stats in the following JSON structure 
 ```javascript
 imuState = {
             "log_time": str(datetime.datetime.now()),

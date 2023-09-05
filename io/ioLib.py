@@ -10,6 +10,12 @@ import neopixel
 import adafruit_mcp4728
 import os
 import logging
+import busio
+from adafruit_bus_device.i2c_device import I2CDevice
+from tmp1075 import TMP1075
+
+
+
 
 class IOexpander:
     def __init__(self,i2c):
@@ -26,31 +32,32 @@ class IOexpander:
         logging.basicConfig(filename='/var/log/io.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # IO expander
-        self.state_pin = self.mcp.get_pin(6)
+        self.state_pin = self.mcp.get_pin(0)
         self.state_pin.direction = digitalio.Direction.INPUT
-        
-        self.bat_pg = self.mcp.get_pin(0)
-        self.bat_pg.direction = digitalio.Direction.INPUT
-
-        self.bat_chg = self.mcp.get_pin(1)
-        self.bat_chg.direction = digitalio.Direction.INPUT
-
-        self.buzzer = self.mcp.get_pin(3)
-        self.buzzer.direction = digitalio.Direction.OUTPUT
 
         self.cap1 = self.mcp.get_pin(2)
         self.cap1.direction = digitalio.Direction.INPUT
 
-        self.cap2 = self.mcp.get_pin(4)
+        self.cap2 = self.mcp.get_pin(3)
         self.cap2.direction = digitalio.Direction.INPUT
+
+        self.buzzer = self.mcp.get_pin(5)
+        self.buzzer.direction = digitalio.Direction.OUTPUT
+
+        self.bat_chg = self.mcp.get_pin(6)
+        self.bat_chg.direction = digitalio.Direction.INPUT        
+        
+        self.bat_pg = self.mcp.get_pin(7)
+        self.bat_pg.direction = digitalio.Direction.INPUT
+
 
         # RPi GPIO
         self.bootLoader = 4
-        self.OnOff_interrupt_button = 27
-        self.OnOff_kill = 22
-        self.batInterrupt_pin = 17
         self.DIAS = 12
         self.flash = 13
+        self.batInterrupt_pin = 17        
+        self.OnOff_kill = 22
+        self.OnOff_interrupt_button = 27
 
         GPIO.setup(self.bootLoader, GPIO.OUT)
         GPIO.setup(self.DIAS, GPIO.OUT)
@@ -58,8 +65,8 @@ class IOexpander:
         GPIO.setup(self.batInterrupt_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.OnOff_interrupt_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+        # Neopixel
         pixel_pin = board.D10
-        # The number of NeoPixels
         num_pixels = 4
         ORDER = neopixel.RGB
         brightness = 0.5
@@ -69,7 +76,9 @@ class IOexpander:
 
         self.OnOff_interruptSig = 0
         self.createOnOffInterrupt()
-        print("io service started")
+        logging.info("io service started")
+
+        self.tmp1075 = TMP1075(0x48)
 
     def OnOff_interrupt(self, channel):
         self.OnOff_interruptSig = 1
@@ -149,6 +158,9 @@ class IOexpander:
     def getCap2Val(self):
         return self.cap2.value
 
+    def carrier_board_temp(self):
+        return self.tmp1075.get_temperature()
+
     def writeStats(self):
         ioInfo = {
         "log_time": str(datetime.datetime.now()),
@@ -156,7 +168,8 @@ class IOexpander:
         "cap2val": f"{self.getCap2Val()}",
         "isBattery": f"{self.isBattery()}",
         "isCharging": f"{self.isCharging()}",
-        "killSig": f"{self.OnOff_interruptSig}"
+        "killSig": f"{self.OnOff_interruptSig}",
+        "carrier_temp": f"{self.carrier_board_temp()}"
             }
         return ioInfo
 
@@ -186,9 +199,6 @@ if __name__ == "__main__":
     i2c = board.I2C()
     io = IOexpander(i2c)
     while(1):
+        print(f"pg: {io.get_temperature()}")
+        print(f"chg: {io.isCharging()}")
         time.sleep(2)
-        io.setBuzzer(0)
-        time.sleep(2)
-
-
-        io.readConf()
