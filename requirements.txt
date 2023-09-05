@@ -1,4 +1,5 @@
 pylint
+iolib
 gpiozero
 adafruit-blinka
 adafruit-circuitpython-mcp230xx

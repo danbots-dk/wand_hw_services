@@ -1,6 +1,6 @@
 #	Makefile for hw services
 
-VERSION=1.0-0
+VERSION=1.0.0-1
 PKG_NAME=danbots-wand-hw-services-$(VERSION)
 PKG_FOLDER=tmp/package
 DEST_FOLDER=/usr/local/bin/wand-hw
