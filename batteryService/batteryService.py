@@ -12,7 +12,6 @@ import fcntl
 
 # Initialize I2C and create instances of BatteryService and IOexpander
 i2c = board.I2C()
-ioService = IOexpander(i2c)
 batteryService = BatteryService(i2c)
 
 # Define the path for the named pipe (FIFO)
@@ -44,8 +43,6 @@ while True:
 
     # Retrieve battery statistics and additional IOexpander data
     batState = batteryService.writeStats()
-    batState["isCharging"] = ioService.isCharging()
-    batState["isBattery"] = ioService.isBattery()
     fcntl.flock(lock, fcntl.LOCK_UN)
     lock.close()
 

@@ -3,6 +3,8 @@ import adafruit_max1704x
 import os
 import json
 import datetime
+from adafruit_mcp230xx.mcp23008 import MCP23008
+import digitalio
 
 class BatteryService():
     """
@@ -54,6 +56,17 @@ class BatteryService():
         self.set_voltageAlertMin()
         self.set_voltageAlertMax()
         self.lowVoltageDetected = False
+
+
+        self.mcp = MCP23008(i2c)
+
+        self.bat_pg = self.mcp.get_pin(0)
+        self.bat_pg.direction = digitalio.Direction.INPUT
+
+        self.bat_chg = self.mcp.get_pin(1)
+        self.bat_chg.direction = digitalio.Direction.INPUT
+
+
         print("Battery service started!")
 
     def set_resetVoltage(self, resetVoltage=2.5):
@@ -175,6 +188,18 @@ class BatteryService():
 
         return alertStatus
 
+
+    def isBattery(self):
+        # 1: battery powered
+        # 0: USB powered
+        return self.bat_pg.value
+    
+    def isCharging(self):
+        # 1: is charging
+        # 0: is not charging
+        return self.bat_chg.value
+    
+
     def writeStats(self):
         """
         Writes battery-related statistics to a JSON object.
@@ -191,7 +216,9 @@ class BatteryService():
             "estimatedTimeForFullRecharge": f"{timeToCharge[0]:.2f}",
             "estimatedTimeForDischarge": f"{timeToCharge[1]:.2f}",
             "Alert": self.get_Alerts(),
-            "lowVoltageDetected": self.lowVoltageDetected
+            "lowVoltageDetected": self.lowVoltageDetected,
+            "isBattery": f"{self.isBattery()}",
+            "isCharging": f"{self.isCharging()}",
         }
         return batteryInfo
 

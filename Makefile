@@ -24,7 +24,7 @@ uninstall-battery:
 	sudo rm -f /usr/local/bin/MAX17048.py 
 	sudo rm -f /usr/local/bin/batteryService.py 
 	sudo rm -f /etc/systemd/system/batteryService.service
-
+	
 install-imu:
 	@echo "Installing the IMU service"
 	pip install -r requirements.txt
@@ -41,7 +41,7 @@ uninstall-imu:
 install-io:
 	@echo "Installing the IO service"
 	pip install -r requirements.txt
-	sudo cp ioService/ioService.py /usr/local/bin/
+		sudo cp ioService/ioService.py /usr/local/bin/
 	sudo cp io/ioLib.py /usr/lib/python3.9/ioLib.py
 	sudo cp ioService/ioService.service /etc/systemd/system/
 	sudo service ioService start
@@ -49,10 +49,10 @@ install-io:
 uninstall-io:
 	@echo "Uninstalling the IO service"
 	systemctl stop ioService.service
-	sudo rm -f /usr/local/bin/ioService.py 
+	sudo rm -f /usr/local/bin/ioService.py
 	sudo rm -f /usr/lib/python3.9/ioLib.py
 	sudo rm -f /etc/systemd/system/ioService.service
-
+	
 install: install-battery install-imu install-io
 	@echo "All services installed"
 
