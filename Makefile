@@ -1,6 +1,6 @@
 #	Makefile for hw services
 
-VERSION=1.0.0-1
+VERSION=1.0.0-2
 PKG_NAME=danbots-wand-hw-services-$(VERSION)
 PKG_FOLDER=tmp/package
 DEST_FOLDER=/usr/local/bin/wand-hw
@@ -73,6 +73,8 @@ pkg-copy:
 	cp requirements.txt $(PKG_FOLDER)/usr/local/bin/wand
 	cp batteryService/MAX17048.py batteryService/batteryService.py $(PKG_FOLDER)/usr/local/bin/wand
 	cp batteryService/batteryService.service $(PKG_FOLDER)/etc/systemd/system/
+	cp io/ioLib.py $(PKG_FOLDER)/usr/local/bin/wand
+	cp io/tmp1075.py $(PKG_FOLDER)/usr/local/bin/wand
 
 deb-pkg: pkg-copy
 	cp -r -p deb-pkg/DEBIAN $(PKG_FOLDER)

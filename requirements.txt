@@ -1,9 +1,13 @@
 pylint
+logging
 iolib
 gpiozero
+pigpio
+rpi_ws281x
 adafruit-blinka
 adafruit-circuitpython-mcp230xx
 adafruit-circuitpython-max1704x
 adafruit-circuitpython-lsm6ds
 adafruit-circuitpython-mcp4725
+adafruit-circuitpython-mcp4728
 adafruit-circuitpython-neopixel

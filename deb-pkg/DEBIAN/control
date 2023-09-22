@@ -1,5 +1,5 @@
 Package: danbots-wand-hw-services
-Version: 1.0.0-1
+Version: 1.0.0-2
 Architecture: all
 Maintainer: Peter Holm <plh@danbots.com>
 Depends: python3 (>=3.8),python3-pip
