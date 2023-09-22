@@ -16,7 +16,7 @@ sudo cp eepromLib/cat24c512.py /usr/lib/python3.9/cat24c512.py
 
 ## Library description
 
-The library provides and api to an Eeprom IC. Further, it indexes the memory so that various version of PCB's, libraries etc. have their own section and can be easily accessed. 
+The library provides an api to the Eeprom IC 24C512. Further, it indexes the memory so that various version of PCB's, libraries etc. have their own section and can be easily accessed. 
 
 ### API
 The following functions can be used:
