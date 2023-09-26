@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ "$1" == "purge" ] ; then
+    #echo "Removing logfiles"
+    rm -f /var/run/wand/battery_stats
+    rm -f /var/log/batteryService.log
+    rm -r /usr/local/bin/wand/__pycache__
+fi
+

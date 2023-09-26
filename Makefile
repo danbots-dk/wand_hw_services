@@ -86,6 +86,7 @@ pkg-push:
 
 clean-pkg:
 	rm -rf $(PKG_FOLDER)
+	rm -rf tmp
 
 install: install-battery install-imu install-io
 	@echo "All services installed"

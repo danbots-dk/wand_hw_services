@@ -1,6 +1,3 @@
 #!/bin/bash
 
-# install requirements
-
 systemctl stop batteryService
-rm -r /usr/local/bin/wand/__pycache__
