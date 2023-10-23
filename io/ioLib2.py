@@ -22,31 +22,31 @@ class WandIO:
 
         # Init MCP23008 input GPIO
         for pin_number, consumer in zip(self.mcp_input_lines[0], self.mcp_input_lines[1]):
-             self.configure_input(chip_label=2, gpio_list=[pin_number, consumer])
+             self.configure_input(chip_label="mcp", gpio_list=[pin_number, consumer])
 
         # Init MCP23008 output GPIO
         for pin_number, consumer in zip(self.mcp_output_lines[0], self.mcp_output_lines[1]):
-            self.configure_output(chip_label=2, gpio_list=[pin_number, consumer])
+            self.configure_output(chip_label="mcp", gpio_list=[pin_number, consumer])
 
 
 
         # Init RPi input GPIO
         for pin_number, consumer in zip(self.rpi_input_lines[0], self.rpi_input_lines[1]):
-            self.configure_input(chip_label=0, gpio_list=[pin_number, consumer])
+            self.configure_input(chip_label="rpi", gpio_list=[pin_number, consumer])
 
         # Init RPi output GPIO
         for pin_number, consumer in zip(self.rpi_output_lines[0], self.rpi_output_lines[1]):
-            self.configure_output(chip_label=0, gpio_list=[pin_number, consumer])
+            self.configure_output(chip_label="rpi", gpio_list=[pin_number, consumer])
         
 
     def configure_input(self, chip_label, gpio_list):
-        if (chip_label == 0):
+        if (chip_label == "rpi"):
             if gpio_list[0] not in self.rpi_gpio_lines:
                 gpio_line = self.chip0.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_IN)
                 self.rpi_gpio_lines[gpio_list[0]] = gpio_line
                 
-        elif (chip_label == 2):
+        elif (chip_label == "mcp"):
             if gpio_list[0] not in self.mcp_gpio_lines:
                 gpio_line = self.chip2.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_IN)
@@ -66,14 +66,15 @@ class WandIO:
             return None  # Return None if the GPIO line is not fo
     
     def configure_output(self, chip_label, gpio_list):
-        if (chip_label == 0):
+        if (chip_label == "rpi"):
             if gpio_list[0] not in self.rpi_gpio_lines:
                 gpio_line = self.chip0.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_OUT)
                 self.rpi_gpio_lines[gpio_list[0]] = gpio_line
-        elif (chip_label == 2):
+        elif (chip_label == "mcp"):
             if gpio_list[0] not in self.mcp_gpio_lines:
                 gpio_line = self.chip2.get_line(gpio_list[0])
+                print(gpio_line)
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_OUT)
                 self.mcp_gpio_lines[gpio_list[0]] = gpio_line
 
@@ -84,7 +85,7 @@ class WandIO:
                 if gpio_line.is_requested():
                     gpio_line.set_value(value)
         elif chip_label == "mcp":
-            if pin_number in self.rpi_gpio_lines:
+            if pin_number in self.mcp_gpio_lines:
                 gpio_line = self.mcp_gpio_lines[pin_number]
                 if gpio_line.is_requested():
                     gpio_line.set_value(value)
@@ -127,9 +128,11 @@ class WandIO:
 
 if __name__ == "__main__":
     wand = WandIO()
+    #wand.set_output("mcp",5,0)
+    print(wand.read_input("mcp",0))
+    time.sleep(1)
+    wand.set_output("rpi",12,1)
+    time.sleep(1)
     wand.set_output("rpi",12,0)
     time.sleep(1)
-    wand.set_output("rpi", 12, 1)
-    time.sleep(1)
-    wand.set_output("rpi", 12, 0)
     wand.release_all_pins()
