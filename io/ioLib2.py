@@ -60,12 +60,18 @@ class WandIO:
                 gpio_line = self.chip0.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_IN)
                 self.rpi_gpio_lines[gpio_list[0]] = gpio_line
+            else:
+                print(f"Cannot configure input on {chip_label} pin {gpio_list[0]}. Is there an existing configuration on the same pins elsewhere?")
+                return 0
                 
         elif (chip_label == "mcp"):
             if gpio_list[0] not in self.mcp_gpio_lines:
                 gpio_line = self.chip2.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_IN)
                 self.mcp_gpio_lines[gpio_list[0]] = gpio_line
+            else:
+                print(f"Cannot configure input on {chip_label} pin {gpio_list[0]}. Is there an existing configuration on the same pins elsewhere?")
+                return 0
 
     def read_input(self, chip_label, pin_number):
             if chip_label == "rpi":
@@ -86,12 +92,17 @@ class WandIO:
                 gpio_line = self.chip0.get_line(gpio_list[0])
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_OUT)
                 self.rpi_gpio_lines[gpio_list[0]] = gpio_line
+            else:
+                print(f"Cannot configure output on {chip_label} pin {gpio_list[0]}. Is there an existing configuration on the same pins elsewhere?")
+                return 0
         elif (chip_label == "mcp"):
             if gpio_list[0] not in self.mcp_gpio_lines:
                 gpio_line = self.chip2.get_line(gpio_list[0])
-                print(gpio_line)
                 gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_DIR_OUT)
                 self.mcp_gpio_lines[gpio_list[0]] = gpio_line
+            else:
+                print(f"Cannot configure output on {chip_label} pin {gpio_list[0]}. Is there an existing configuration on the same pins elsewhere?")
+                return 0
 
     def set_output(self, chip_label, pin_number, value):
         if chip_label == "rpi":
@@ -144,6 +155,7 @@ class WandIO:
             gpio_line.request(consumer=gpio_list[1], type=gpiod.LINE_REQ_EV_RISING_EDGE)
             self.rpi_gpio_lines[gpio_list[0]] = gpio_line
         else:
+            print(f"Cannot create interrupt on {chip_label} pin {gpio_list[0]}. Is there an existing interrupt on the same pins elsewhere?")
             return 0
             
         def interrupt_thread():
@@ -170,24 +182,28 @@ class WandIO:
         thread = threading.Thread(target=interrupt_thread)
         thread.daemon = True
         thread.start()
-           
-
-    def get_button_val(self, button):
-        if button == 0:
-            return self.read_input("mcp",2)
-        elif button == 1:
-            return self.read_input("mcp",4)
+        
+    def get_primary_power_source(self):
+        # 0: USB is primary
+        # 1: Battery is primary
+        return self.read_input("mcp",0)
         
 def test_interrupt(event):
     print("test interrupt")
+
+def test_interrupt2(event):
+    print("test2 interrupt")
 
 
 if __name__ == "__main__":
     wand = WandIO()
     int1 = wand.configure_interrupt(chip_label="mcp", gpio_list=[3, "button2"], callback=test_interrupt)
+    int2 = wand.configure_interrupt(chip_label="mcp", gpio_list=[2, "button1"], callback=test_interrupt2)
+    wand.release_pin("mcp", 7)
     #wand.set_output("mcp",5,0)
     while(1):
         try:
+            #print(wand.get_primary_power_source())
             time.sleep(0.1)
         except KeyboardInterrupt:
             print("Releasing all pins")
