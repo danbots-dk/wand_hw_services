@@ -1,0 +1,21 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    fragment@0 {
+        target = <&i2c1>; // Use the appropriate I2C bus (i2c1 in this example)
+
+        overlay {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            at24@50 {
+                compatible = "atmel,24c512", "atmel,24c256", "atmel,24c128", "atmel,24c64", "atmel,24c32", "atmel,24c08", "atmel,24c02";
+                pagesize = <128>; // Page size for AT24C512
+                reg = <0x50>;
+                size = <65536>;   // Size of AT24C512 (512 Kbits)
+                address-width = <17>; // Address width for AT24C512
+                status = "okay";
+            };
+        };
+    };
+};

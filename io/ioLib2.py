@@ -1,7 +1,7 @@
 import gpiod
 import time
 import threading
-
+import os
 
 # sudo apt install python3-libgpiod
 
@@ -17,7 +17,7 @@ class WandIO:
         self.rpi_input_lines = [[], []]
         
         self.mcp_output_lines = [[1, 4, 5], ["cap_rst", "mirror_heat", "sound"]] 
-        self.rpi_output_lines = [[4, 12, 13], ["bootloader","DIAS", "flash"]]
+        self.rpi_output_lines = [[4, 12, 13, 22], ["bootloader","DIAS", "flash" "kill"]]
 
         self.mcp_interrupt_lines = [[2, 3], ["button1", "button2"]]
         self.rpi_interrupt_lines = [[27, 6, 17], ["on_off_interrupt", "carrier_pcb_temp", "battert_fuel_interrupt"]]
@@ -165,9 +165,18 @@ class WandIO:
                     gpio_line.event_read() # release interrupt
                     callback(event)
                     
+                    
+                    # interrupt_hold_time = 0
+                    # interrupt_hold_time_threshold = 3
+                    intterupt_hold_delay = 0.05
                     # Wait for the button to be released (polling)
-                    while gpio_line.get_value() == 1:
-                        time.sleep(0.05)
+                    while gpio_line.get_value() == 1:                        
+                        time.sleep(intterupt_hold_delay)
+                        # interrupt_hold_time = interrupt_hold_time + intterupt_hold_delay
+                        # print(interrupt_hold_time)
+                        # if (interrupt_hold_time > interrupt_hold_time_threshold):
+                        #     os.system("shutdown now")
+                        #   # Turn off, vibrate etc.
                     
                     # Pop the pin from the appropriate dictionary
                     if chip_label == "mcp" and gpio_list[0] in self.mcp_gpio_lines:

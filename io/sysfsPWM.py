@@ -14,7 +14,8 @@ class SysfsPWM:
         with open(pwm_export_path, "w") as f:
             f.write(str(self.pwm_channel))
 
-    def set_duty_cycle(self, duty_cycle_percent):
+    def set_duty_cycle(self, duty_cycle_normalized):
+        duty_cycle_percent = int(duty_cycle_normalized*100.0)
         if duty_cycle_percent < 0 or duty_cycle_percent > 100:
             raise ValueError("Duty cycle percentage must be between 0 and 100.")
 
